@@ -1,23 +1,23 @@
 import { useMemo, useState } from "react";
 import { MaskLines, Reveal, ScrambleText, usePageTitle } from "../components/Reveal";
-import { MoonDisc } from "../components/Icons";
-import { SKY_EVENTS, EVENT_TYPE_LABEL, type EventType } from "../lib/data";
-import { darkQuality, moonPhase, MONTHS_SHORT, ruDate } from "../lib/astro";
+import { GaugeDisc, IconPin } from "../components/Icons";
+import { EVENTS, EVENT_TYPE_LABEL, type EventType } from "../lib/data";
+import { CITIES, routeInfo, seasonInfo, fmtKm, fmtPrice, MONTHS_SHORT } from "../lib/drive";
 
-const TYPE_FILTERS: Array<EventType | "all"> = ["all", "meteors", "planet", "eclipse"];
+const TYPE_FILTERS: Array<EventType | "all"> = ["all", "track", "ice", "rally", "classic"];
 
 const TYPE_CHIP: Record<EventType, string> = {
-  meteors: "border-amberstar/50 text-amberstar",
-  planet: "border-skyc/50 text-skyc",
-  eclipse: "border-flare/50 text-flare",
-  moon: "border-nebula/50 text-nebula",
+  track: "border-skyc/50 text-skyc",
+  ice: "border-nebula/50 text-nebula",
+  rally: "border-amberstar/50 text-amberstar",
+  classic: "border-flare/50 text-flare",
 };
 
 const MONTHS_FULL = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
-function Visibility({ n }: { n: number }) {
+function Rating({ n, label }: { n: number; label: string }) {
   return (
-    <span className="flex items-center gap-1" title={`Видимость из России: ${n}/5`}>
+    <span className="flex items-center gap-1" title={`${label}: ${n}/5`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span key={i} className={`vd ${i <= n ? "bg-amberstar" : "bg-line"}`} />
       ))}
@@ -25,50 +25,100 @@ function Visibility({ n }: { n: number }) {
   );
 }
 
-function MoonLab() {
-  const [value, setValue] = useState(() => new Date().toISOString().slice(0, 10));
-  const date = useMemo(() => {
-    const d = new Date(value + "T12:00:00Z");
-    return isNaN(d.getTime()) ? new Date() : d;
-  }, [value]);
-  const mp = moonPhase(date);
-  const q = darkQuality(mp.illum);
-  const toneClass = q.tone === "nebula" ? "border-nebula/50 text-nebula" : q.tone === "amberstar" ? "border-amberstar/50 text-amberstar" : "border-flare/50 text-flare";
+function RouteLab() {
+  const [from, setFrom] = useState("msk");
+  const [to, setTo] = useState("mvody");
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+
+  const fromCity = CITIES.find((c) => c.id === from) ?? CITIES[0];
+  const toCity = CITIES.find((c) => c.id === to) ?? CITIES[4];
+  const swapped = from === to;
+
+  const info = useMemo(
+    () => routeInfo(fromCity, swapped ? CITIES.find((c) => c.id === "sochi") ?? toCity : toCity),
+    [fromCity, toCity, swapped]
+  );
+
+  const season = seasonInfo(new Date(date + "T12:00:00Z"));
+  const toneClass =
+    season.tone === "nebula"
+      ? "border-nebula/50 text-nebula"
+      : season.tone === "amberstar"
+        ? "border-amberstar/50 text-amberstar"
+        : season.tone === "skyc"
+          ? "border-skyc/50 text-skyc"
+          : "border-flare/50 text-flare";
+
+  const gaugeValue = Math.min(1, Math.log10(Math.max(info.km, 40) / 40) / Math.log10(9000 / 40));
 
   return (
     <Reveal className="border border-line bg-night-900/70 p-7 lg:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">Лунный калькулятор</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">Калькулятор маршрута</p>
         <input
           type="date"
-          value={value}
-          onChange={(e) => e.target.value && setValue(e.target.value)}
+          value={date}
+          onChange={(e) => e.target.value && setDate(e.target.value)}
           className="border border-line bg-night-950 px-4 py-2 font-mono text-xs text-star outline-none transition-colors focus:border-amberstar/60 [color-scheme:dark]"
-          aria-label="Выберите дату"
+          aria-label="Дата выезда"
         />
       </div>
-      <div className="mt-7 grid gap-8 md:grid-cols-[auto_1fr] md:items-center">
-        <div className="flex items-center gap-5">
-          <MoonDisc phase={mp.phase} size={92} className="float-y shrink-0" />
-          <div>
-            <p className="font-display text-lg font-bold lg:text-xl">{mp.name}</p>
-            <p className="mt-1 font-mono text-xs text-dim">{ruDate(date, { day: "numeric", month: "long", year: "numeric" })}</p>
-            <p className="mt-1 font-mono text-xs text-faint">освещённость диска {(mp.illum * 100).toFixed(0)}%</p>
+
+      <div className="mt-7 grid gap-6 md:grid-cols-2">
+        {[
+          { label: "Откуда", value: from, set: setFrom, other: to },
+          { label: "Куда", value: to, set: setTo, other: from },
+        ].map((f) => (
+          <div key={f.label}>
+            <label className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">
+              <IconPin className="h-3.5 w-3.5 text-amberstar" />
+              {f.label}
+            </label>
+            <div className="relative">
+              <select
+                value={f.value}
+                onChange={(e) => f.set(e.target.value)}
+                className="w-full appearance-none border border-line bg-night-950 px-4 py-3 pr-10 text-sm text-star outline-none transition-colors focus:border-amberstar/60"
+              >
+                {CITIES.map((c) => (
+                  <option key={c.id} value={c.id} disabled={c.id === f.other}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <svg viewBox="0 0 12 8" className="pointer-events-none absolute right-4 top-1/2 h-2.5 w-2.5 -translate-y-1/2 text-faint">
+                <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </div>
           </div>
+        ))}
+      </div>
+
+      <div className="mt-8 grid gap-8 border-t border-line pt-7 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+        <div className="flex flex-col items-center">
+          <GaugeDisc value={gaugeValue} size={132} />
+          <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">индекс дальности</p>
         </div>
-        <div className="border-t border-line pt-5 md:border-l md:border-t-0 md:pl-8 md:pt-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className={`border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] ${toneClass}`}>
-              тёмное небо: {q.label}
-            </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
-              {mp.illum < 0.35 ? "луна не помешает" : mp.illum < 0.65 ? "луна терпимая" : "луна яркая"}
-            </span>
-          </div>
-          <p className="mt-4 max-w-lg text-sm leading-relaxed text-dim">{q.note}.</p>
-          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
-            Совет: планируйте наблюдения в окно ±4 дня вокруг новолуния
-          </p>
+
+        <div className="grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4">
+          {[
+            { v: fmtKm(info.km), l: "по дорогам" },
+            { v: `${Math.floor(info.hours)} ч`, l: "чистого хода" },
+            { v: `${info.days} ${info.days === 1 ? "день" : "дн"}`, l: "с ночёвками" },
+            { v: `~${info.fuel} л`, l: `топлива · ${fmtPrice(info.fuelCost)}` },
+          ].map((x) => (
+            <div key={x.l}>
+              <p className="font-display text-xl text-star lg:text-2xl">{x.v}</p>
+              <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">{x.l}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="lg:max-w-xs">
+          <span className={`border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] ${toneClass}`}>
+            {season.name} · {season.label}
+          </span>
+          <p className="mt-4 text-sm leading-relaxed text-dim">{season.note}.</p>
         </div>
       </div>
     </Reveal>
@@ -76,10 +126,10 @@ function MoonLab() {
 }
 
 export default function CalendarPage() {
-  usePageTitle("Календарь неба 2026 — Пульсар");
+  usePageTitle("Сезон-2026 — Апекс");
   const [type, setType] = useState<EventType | "all">("all");
 
-  const filtered = SKY_EVENTS.filter((e) => type === "all" || e.type === type);
+  const filtered = EVENTS.filter((e) => type === "all" || e.type === type);
   const months = [...new Set(filtered.map((e) => e.monthIdx))].sort((a, b) => a - b);
 
   return (
@@ -87,21 +137,21 @@ export default function CalendarPage() {
       <section className="mx-auto max-w-7xl px-5 pt-32 lg:px-8 lg:pt-40">
         <div className="max-w-3xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-            <ScrambleText text="Календарь неба · 13 событий · все даты проверены" />
+            <ScrambleText text="Календарь сезона · 13 событий · лёд, трасса, ралли, классика" />
           </p>
           <h1 className="mt-7 font-display text-[clamp(2.1rem,5.5vw,4.4rem)] font-bold uppercase leading-[1.06] tracking-tight">
-            <MaskLines lines={[<span key="1">2026: год, когда</span>, <span key="2">небо</span>, <span key="3" className="text-amberstar">расщедрилось</span>]} />
+            <MaskLines lines={[<span key="1">2026: год, когда</span>, <span key="2">руль не остынет</span>, <span key="3" className="text-amberstar">ни на месяц</span>]} />
           </h1>
           <Reveal delay={300} className="mt-7 max-w-xl">
             <p className="text-sm leading-relaxed text-dim lg:text-base">
-              Полное солнечное затмение, два лунных, противостояния Юпитера и Сатурна — и Персеиды ровно в новолуние.
-              Под каждое событие из этого списка у нас есть заезд или свободная площадка.
+              Ледовая гонка на Байкале, этап RDS, «Шёлковый путь» и золотые серпантины Кавказа.
+              Под каждое событие календаря у клуба есть заезд, машина или место в паддоке.
             </p>
           </Reveal>
         </div>
 
         <div className="mt-14">
-          <MoonLab />
+          <RouteLab />
         </div>
       </section>
 
@@ -122,7 +172,7 @@ export default function CalendarPage() {
             );
           })}
           <span className="ml-auto hidden font-mono text-[11px] uppercase tracking-[0.16em] text-faint md:block">
-            видимость указана для средней полосы России
+            зрелищность — по пятибалльной шкале клуба
           </span>
         </div>
 
@@ -137,36 +187,35 @@ export default function CalendarPage() {
               <div>
                 {filtered
                   .filter((e) => e.monthIdx === mIdx)
-                  .map((e, i) => {
-                    const emp = moonPhase(new Date(e.iso));
-                    return (
-                      <Reveal key={e.id} delay={i * 70}>
-                        <div className="group grid grid-cols-[64px_1fr] items-center gap-5 border-t border-line py-6 transition-all duration-300 last:border-b hover:bg-night-900/60 sm:grid-cols-[84px_56px_1fr_auto] sm:gap-7 lg:px-4">
-                          <div>
-                            <p className="font-display text-2xl font-bold text-star transition-colors duration-300 group-hover:text-amberstar">{e.dayNum}</p>
-                            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-faint">{MONTHS_SHORT[e.monthIdx]}</p>
-                          </div>
-                          <div className="hidden sm:block" title={`Луна: ${emp.name}`}>
-                            <MoonDisc phase={emp.phase} size={36} />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-3">
-                              <h3 className="font-display text-base font-semibold lg:text-lg">{e.title}</h3>
-                              {e.meta && <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-nebula">{e.meta}</span>}
-                              <span className={`border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] ${TYPE_CHIP[e.type]}`}>
-                                {EVENT_TYPE_LABEL[e.type]}
-                              </span>
-                            </div>
-                            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dim">{e.desc}</p>
-                          </div>
-                          <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end sm:justify-center">
-                            <Visibility n={e.visibility} />
-                            <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-faint">видимость</span>
-                          </div>
+                  .map((e, i) => (
+                    <Reveal key={e.id} delay={i * 70}>
+                      <div className="group grid grid-cols-[64px_1fr] items-center gap-5 border-t border-line py-6 transition-all duration-300 last:border-b hover:bg-night-900/60 sm:grid-cols-[84px_1fr_auto] sm:gap-7 lg:px-4">
+                        <div>
+                          <p className="font-display text-2xl font-bold text-star transition-colors duration-300 group-hover:text-amberstar">{e.dayNum}</p>
+                          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-faint">{MONTHS_SHORT[e.monthIdx]}</p>
                         </div>
-                      </Reveal>
-                    );
-                  })}
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <h3 className="font-display text-base font-semibold lg:text-lg">{e.title}</h3>
+                            {e.meta && (
+                              <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nebula">
+                                <IconPin className="h-3 w-3" />
+                                {e.meta}
+                              </span>
+                            )}
+                            <span className={`border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] ${TYPE_CHIP[e.type]}`}>
+                              {EVENT_TYPE_LABEL[e.type]}
+                            </span>
+                          </div>
+                          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dim">{e.desc}</p>
+                        </div>
+                        <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end sm:justify-center">
+                          <Rating n={e.visibility} label="Зрелищность" />
+                          <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-faint">зрелищность</span>
+                        </div>
+                      </div>
+                    </Reveal>
+                  ))}
               </div>
             </div>
           ))}
@@ -174,12 +223,12 @@ export default function CalendarPage() {
 
         <Reveal className="mt-16 grid gap-6 border border-line bg-night-900/60 p-8 md:grid-cols-3 lg:p-10">
           {[
-            ["ZHR", "зенитное часовое число: сколько метеоров увидел бы наблюдатель при идеальных условиях"],
-            ["ᵐ", "звёздная величина: чем меньше, тем ярче. Юпитер в противостоянии — −2.7, предел глаза — +6.5"],
-            ["SQM", "яркость фона неба в звёздных величинах на квадратную секунду дуги. 21.9 — почти предел"],
+            ["Чекпоинт", "контрольная точка маршрута с отметкой времени. В фоторалли побеждает не скорость, а лучшая карточка с точки"],
+            ["Зрелищность 5/5", "события, после которых в клуб приходят новые люди. Лёд Байкала и перевальный сезон — как раз из таких"],
+            ["Резервные сутки", "у каждого выезда клуба есть запасной день: дороги в горах живут по своим правилам, и мы к этому готовы"],
           ].map(([term, def]) => (
             <div key={term} className="flex gap-4">
-              <span className="font-display text-xl font-bold text-amberstar">{term}</span>
+              <span className="font-display text-xl font-bold text-amberstar whitespace-nowrap">{term.split(" ")[0]}</span>
               <p className="text-sm leading-relaxed text-dim">{def}</p>
             </div>
           ))}

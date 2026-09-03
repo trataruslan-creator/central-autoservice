@@ -1,14 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import Starfield from "./Starfield";
-import { PulsarLogo, MoonDisc, IconTelegram, IconVk, IconYoutube } from "./Icons";
-import { moonPhase } from "../lib/astro";
+import LightTrails from "./LightTrails";
+import { LogoMark, IconTelegram, IconVk, IconYoutube, IconSteering } from "./Icons";
+import { seasonInfo } from "../lib/drive";
 
 const NAV = [
   { to: "/", label: "Главная", end: true },
   { to: "/tours", label: "Экспедиции" },
-  { to: "/calendar", label: "Календарь неба" },
-  { to: "/about", label: "Обсерватория" },
+  { to: "/calendar", label: "Сезон-2026" },
+  { to: "/about", label: "Гараж" },
 ];
 
 function Header() {
@@ -33,10 +33,8 @@ function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
         <Link to="/" className="group flex items-center gap-3">
-          <PulsarLogo className="h-8 w-8 transition-transform duration-500 group-hover:rotate-90" />
-          <span className="font-display text-sm font-bold tracking-[0.32em] text-star">
-            ПУЛЬСАР
-          </span>
+          <LogoMark className="h-8 w-8 text-amberstar transition-transform duration-500 group-hover:rotate-[18deg]" />
+          <span className="font-display text-sm tracking-[0.32em] text-star">АПЕКС</span>
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
@@ -68,7 +66,7 @@ function Header() {
             className="group relative overflow-hidden border border-amberstar/60 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-amberstar transition-colors duration-300 hover:text-night-950"
           >
             <span className="absolute inset-0 -translate-x-full bg-amberstar transition-transform duration-300 ease-out group-hover:translate-x-0" />
-            <span className="relative">Забронировать</span>
+            <span className="relative">В колонну</span>
           </Link>
         </nav>
 
@@ -88,7 +86,7 @@ function Header() {
         }`}
       >
         <nav className="flex flex-col gap-1 px-5 py-4">
-          {[...NAV, { to: "/booking", label: "Забронировать", end: false }].map((n) => (
+          {[...NAV, { to: "/booking", label: "В колонну", end: false }].map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
@@ -108,24 +106,24 @@ function Header() {
 }
 
 function Footer() {
-  const mp = moonPhase(new Date());
+  const season = seasonInfo(new Date());
   return (
     <footer className="relative z-10 mt-24 overflow-hidden border-t border-line bg-night-950">
       <div className="mx-auto max-w-7xl px-5 pt-16 lg:px-8">
         <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Link to="/" className="flex items-center gap-3">
-              <PulsarLogo className="h-9 w-9" />
-              <span className="font-display text-base font-bold tracking-[0.32em]">ПУЛЬСАР</span>
+              <LogoMark className="h-9 w-9 text-amberstar" />
+              <span className="font-display text-base tracking-[0.32em]">АПЕКС</span>
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-dim">
-              Астроэкспедиции в горы Кавказа. Возим людей туда, где небо снова становится объёмным, — с 2019 года.
+              Клуб автомобильных экспедиций. Возим людей туда, где дорога — это событие, а не способ добраться, — с 2016 года.
             </p>
             <div className="mt-6 flex gap-3">
               {[
-                { icon: <IconTelegram className="h-4 w-4" />, label: "Telegram", href: "https://t.me/pulsar_sky" },
-                { icon: <IconVk className="h-4 w-4" />, label: "VK", href: "https://vk.com/pulsar_sky" },
-                { icon: <IconYoutube className="h-4 w-4" />, label: "YouTube", href: "https://youtube.com/@pulsar_sky" },
+                { icon: <IconTelegram className="h-4 w-4" />, label: "Telegram", href: "https://t.me/apex_drive" },
+                { icon: <IconVk className="h-4 w-4" />, label: "VK", href: "https://vk.com/apex_drive" },
+                { icon: <IconYoutube className="h-4 w-4" />, label: "YouTube", href: "https://youtube.com/@apex_drive" },
               ].map((s) => (
                 <a
                   key={s.label}
@@ -162,30 +160,30 @@ function Footer() {
                 <a href="tel:+79280001408" className="transition-colors hover:text-star">+7 928 000-14-08</a>
               </li>
               <li>
-                <a href="mailto:hello@pulsar.sky" className="transition-colors hover:text-star">hello@pulsar.sky</a>
+                <a href="mailto:drive@apex.club" className="transition-colors hover:text-star">drive@apex.club</a>
               </li>
               <li>
-                <a href="https://t.me/pulsar_sky" target="_blank" rel="noreferrer" className="transition-colors hover:text-star">
-                  @pulsar_sky
+                <a href="https://t.me/apex_drive" target="_blank" rel="noreferrer" className="transition-colors hover:text-star">
+                  @apex_drive
                 </a>
               </li>
-              <li className="pt-2 font-mono text-xs text-faint">Отвечаем в течение 2 часов, даже ночью — мы не спим</li>
+              <li className="pt-2 font-mono text-xs text-faint">Отвечаем за 2 часа — даже в перевальную ночь</li>
             </ul>
           </div>
 
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-faint">Координаты</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-faint">Базы клуба</p>
             <ul className="mt-5 space-y-2 font-mono text-xs leading-relaxed text-dim">
-              <li>43.6983° с.ш.</li>
-              <li>41.4789° в.д.</li>
-              <li>2 100 м · плато Шон-Хорук</li>
-              <li>Бортль 2 · SQM 21.9</li>
+              <li>Архыз · плато Шон-Хорук, 2100 м</li>
+              <li>Москва · Moscow Raceway, бокс 14</li>
+              <li>Иркутск · лёд Малого моря</li>
+              <li>43.6983° с.ш. · 41.4789° в.д.</li>
             </ul>
             <div className="mt-6 flex items-center gap-3 border border-line bg-night-900/60 p-3">
-              <MoonDisc phase={mp.phase} size={30} />
+              <IconSteering className="h-7 w-7 shrink-0 text-amberstar" />
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">Сейчас в небе</p>
-                <p className="text-xs text-star">{mp.name}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">Сейчас на дорогах</p>
+                <p className="text-xs text-star">{season.name} · {season.label}</p>
               </div>
             </div>
           </div>
@@ -193,27 +191,16 @@ function Footer() {
       </div>
 
       <div className="pointer-events-none select-none overflow-hidden">
-        <p className="text-outline whitespace-nowrap text-center font-display text-[18vw] font-bold leading-[0.85]">
-          ПУЛЬСАР
-        </p>
+        <p className="text-outline whitespace-nowrap text-center font-display text-[19vw] leading-[0.85]">АПЕКС</p>
       </div>
 
-      <div className="border-t border-line">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-5 font-mono text-[11px] uppercase tracking-[0.18em] text-faint md:flex-row lg:px-8">
-          <p>© 2019–2026 обсерватория «Пульсар»</p>
-          <p className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute h-2 w-2 rounded-full bg-nebula" />
-              <span className="h-2 w-2 rounded-full bg-nebula" />
-            </span>
-            телескопы развёрнуты · небо открыто
-          </p>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="transition-colors hover:text-amberstar"
-          >
-            наверх ↑
-          </button>
+      <div className="relative border-t border-line">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 font-mono text-[10px] uppercase tracking-[0.18em] text-faint lg:px-8">
+          <span>© 2016–2026 · Апекс, клуб автомобильных экспедиций</span>
+          <span className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-nebula" />
+            18 машин на ходу · техничка на связи
+          </span>
         </div>
       </div>
     </footer>
@@ -224,23 +211,24 @@ export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [location.pathname]);
 
   return (
-    <div className="relative min-h-screen">
-      <Starfield />
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(1100px 700px at 82% -10%, rgba(37,58,110,0.5), transparent 65%), radial-gradient(900px 620px at -12% 30%, rgba(24,66,74,0.42), transparent 62%), radial-gradient(760px 540px at 55% 118%, rgba(96,62,26,0.3), transparent 60%), linear-gradient(180deg, rgba(6,10,23,0) 0%, rgba(6,10,23,0.55) 100%)",
-        }}
-      />
-      <div className="noise pointer-events-none fixed inset-0 z-[60] opacity-[0.05]" aria-hidden="true" />
+    <div className="relative min-h-screen overflow-x-clip bg-night-950 text-star">
+      {/* ambient layers */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(1100px_700px_at_82%_-10%,rgba(242,163,60,0.09),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_700px_at_-10%_45%,rgba(226,89,63,0.07),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(1000px_600px_at_50%_115%,rgba(156,196,242,0.06),transparent_60%)]" />
+      </div>
+      <LightTrails />
+      <div className="noise pointer-events-none fixed inset-0 z-[1] opacity-[0.05]" />
+
       <Header />
-      <main className="relative z-10">{children}</main>
+      <main key={location.pathname} className="relative z-10 anim-fadeup">
+        {children}
+      </main>
       <Footer />
     </div>
   );

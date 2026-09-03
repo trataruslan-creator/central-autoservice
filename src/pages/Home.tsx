@@ -1,350 +1,387 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { MaskLines, Reveal, ScrambleText, useCountUp, usePageTitle } from "../components/Reveal";
-import { MoonDisc, ArrowUpRight, GlyphBand, GlyphSpiral, GlyphRings, GlyphNebula, GlyphGlow, GlyphMeteor } from "../components/Icons";
 import Ticker from "../components/Ticker";
-import { darkQuality, moonPhase, nextNewMoon, ruDate, fmtPrice } from "../lib/astro";
-import { SKY_EVENTS, SKY_OBJECTS, STATS, TOURS, type SkyObject } from "../lib/data";
-import { MILKYWAY_IMG } from "../lib/images";
+import { Reveal, MaskLines, ScrambleText, useCountUp, usePageTitle } from "../components/Reveal";
+import { ArrowUpRight, ObjectIcon, IconPin, IconSteering, IconUsers } from "../components/Icons";
+import { EVENTS, HIGHLIGHTS, STATS, TOURS, type Highlight } from "../lib/data";
+import { fmtPrice, pad, seasonInfo } from "../lib/drive";
+import { SERPENTINE_IMG } from "../lib/images";
 
-const OBJECT_ICONS: Record<SkyObject["icon"], typeof GlyphBand> = {
-  band: GlyphBand,
-  spiral: GlyphSpiral,
-  rings: GlyphRings,
-  nebula: GlyphNebula,
-  glow: GlyphGlow,
-  meteor: GlyphMeteor,
-};
+const TICKER = [
+  "Moscow Raceway: сухо · асфальт +18°C",
+  "Ближайший заезд — 14 августа, Архыз",
+  "Baikal Ice Cup: открыта регистрация",
+  "Флот на ходу: 18 из 18 машин",
+  "Новичкам — контраварийный курс в подарок",
+  "4 июля едем смотреть «Шёлковый путь»",
+  "Сентябрь: золотые серпантины Кавказа",
+];
 
-const TONE_TEXT: Record<string, string> = {
-  nebula: "text-nebula",
-  amberstar: "text-amberstar",
-  flare: "text-flare",
-};
-
-function StatBlock({ value, suffix, label, note, decimals = 0, delay }: { value: number; suffix: string; label: string; note: string; decimals?: number; delay: number }) {
-  const { ref, val } = useCountUp(value, 1600, decimals);
-  const shown = decimals > 0 ? val.toFixed(decimals).replace(".", ",") : new Intl.NumberFormat("ru-RU").format(val);
+function Stat({ value, suffix, label, note, delay }: { value: number; suffix: string; label: string; note: string; delay: number }) {
+  const { ref, val } = useCountUp(value, 1600);
   return (
-    <Reveal delay={delay} className="group border border-line bg-night-900/60 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-amberstar/50 hover:bg-night-850">
-      <p className="font-display text-4xl font-bold text-star transition-colors duration-500 group-hover:text-amberstar lg:text-5xl">
-        <span ref={ref}>{shown}</span>
-        <span className="text-2xl text-amberstar">{suffix}</span>
+    <Reveal delay={delay} className="group border-l-2 border-line pl-6 transition-colors duration-500 hover:border-amberstar">
+      <p className="font-display text-4xl font-bold text-star lg:text-5xl">
+        <span ref={ref}>{new Intl.NumberFormat("ru-RU").format(val)}</span>
+        {suffix && <span className="text-amberstar">{suffix}</span>}
       </p>
-      <p className="mt-4 text-sm font-semibold text-star">{label}</p>
-      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">{note}</p>
+      <p className="mt-3 text-sm font-semibold text-star">{label}</p>
+      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">{note}</p>
     </Reveal>
   );
 }
 
-export default function Home() {
-  usePageTitle("Пульсар — астроэкспедиции и звёздное небо");
-  const today = new Date();
-  const mp = moonPhase(today);
-  const quality = darkQuality(mp.illum);
-  const newMoon = nextNewMoon(today);
-  const [activeObj, setActiveObj] = useState<SkyObject>(SKY_OBJECTS[0]);
-  const ActiveIcon = OBJECT_ICONS[activeObj.icon];
+function LivePanel() {
+  const [now, setNow] = useState(() => new Date());
 
-  const upcoming = [...TOURS].sort((a, b) => a.startISO.localeCompare(b.startISO)).slice(0, 4);
-  const tickerItems = SKY_EVENTS.filter((e) => e.visibility >= 4).map((e) => `${e.dateLabel} — ${e.title}`);
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const next = useMemo(() => {
+    const sorted = [...TOURS].sort((a, b) => a.startISO.localeCompare(b.startISO));
+    return sorted.find((t) => new Date(t.startISO).getTime() > now.getTime());
+  }, [now]);
+
+  const season = seasonInfo(now);
+  let diff = next ? Math.max(0, new Date(next.startISO).getTime() - now.getTime()) : 0;
+  const d = Math.floor(diff / 86_400_000);
+  diff -= d * 86_400_000;
+  const h = Math.floor(diff / 3_600_000);
+  diff -= h * 3_600_000;
+  const m = Math.floor(diff / 60_000);
+  const s = Math.floor((diff - m * 60_000) / 1000);
+
+  return (
+    <div className="anim-fadeup relative border border-line bg-night-900/70 backdrop-blur-sm" style={{ animationDelay: "350ms" }}>
+      <div className="flex items-center justify-between border-b border-line px-6 py-4">
+        <span className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-dim">
+          <span className="relative flex h-2 w-2">
+            <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-nebula" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-nebula" />
+          </span>
+          Сейчас в клубе
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+          {season.name} · {season.label}
+        </span>
+      </div>
+
+      <div className="grid gap-6 p-6">
+        <div className="flex items-end justify-between">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">Местное время базы</p>
+            <p className="mt-1 font-display text-3xl tabular-nums text-star lg:text-4xl">
+              {pad(now.getHours())}:{pad(now.getMinutes())}
+              <span className="text-amberstar">:{pad(now.getSeconds())}</span>
+            </p>
+          </div>
+          <IconSteering className="spin-slow h-10 w-10 text-line" />
+        </div>
+
+        <div className="border-t border-line pt-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">До ближайшего заезда</p>
+          {next ? (
+            <>
+              <p className="mt-2 font-display text-2xl tabular-nums text-amberstar lg:text-3xl">
+                {d} дн {pad(h)}:{pad(m)}:{pad(s)}
+              </p>
+              <p className="mt-2 text-sm text-dim">
+                {next.title} · {next.location}
+              </p>
+            </>
+          ) : (
+            <p className="mt-2 text-sm text-dim">Заезды сезона-2026 стартовали — смотрите календарь</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 border-t border-line pt-5">
+          <div>
+            <p className="font-display text-2xl text-star">{TOURS.length}</p>
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">заездов в сезоне</p>
+          </div>
+          <div>
+            <p className="font-display text-2xl text-star">{EVENTS.length}</p>
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">событий в календаре</p>
+          </div>
+        </div>
+
+        <Link
+          to="/booking"
+          className="group flex items-center justify-between border border-line bg-night-950/60 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-star transition-all duration-300 hover:border-amberstar/60 hover:text-amberstar"
+        >
+          Занять место в колонне
+          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function HighlightObject({ o }: { o: Highlight }) {
+  return (
+    <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="min-h-[280px]">
+        <ObjectIcon kind={o.icon} className="h-16 w-16 text-amberstar" />
+        <h3 className="mt-6 font-display text-2xl font-bold text-star lg:text-4xl">{o.name}</h3>
+        <div className="mt-4 flex flex-wrap gap-2.5">
+          <span className="border border-nebula/50 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-nebula">нужно: {o.need}</span>
+          <span className="border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-dim">{o.best}</span>
+        </div>
+        <p className="mt-6 max-w-lg text-sm leading-relaxed text-dim lg:text-base">{o.desc}</p>
+      </div>
+      <div className="relative overflow-hidden border border-line bg-night-900/50">
+        <svg viewBox="0 0 400 280" className="h-full w-full" aria-hidden="true">
+          <defs>
+            <linearGradient id="roadg" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stopColor="#f2a33c" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#e2593f" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+          <path d="M-10 250 C 80 240, 90 190, 150 170 S 260 150, 290 110 S 330 40, 410 20" fill="none" stroke="#2b2e39" strokeWidth="26" strokeLinecap="round" />
+          <path d="M-10 250 C 80 240, 90 190, 150 170 S 260 150, 290 110 S 330 40, 410 20" fill="none" stroke="url(#roadg)" strokeWidth="2.4" className="dashline" />
+          <circle cx="150" cy="170" r="4" fill="#f2a33c" />
+          <circle cx="290" cy="110" r="4" fill="#e2593f" />
+          <text x="150" y="196" textAnchor="middle" fill="#666d7d" fontSize="9" fontFamily="JetBrains Mono, monospace" letterSpacing="2">ЧЕКПОИНТ 1</text>
+          <text x="290" y="90" textAnchor="middle" fill="#666d7d" fontSize="9" fontFamily="JetBrains Mono, monospace" letterSpacing="2">ЧЕКПОИНТ 2</text>
+        </svg>
+        <div className="absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
+          0{HIGHLIGHTS.findIndex((x) => x.id === o.id) + 1} / 0{HIGHLIGHTS.length}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  usePageTitle("Апекс — клуб автомобильных экспедиций");
+  const [active, setActive] = useState(HIGHLIGHTS[0].id);
+  const current = HIGHLIGHTS.find((o) => o.id === active) ?? HIGHLIGHTS[0];
+
+  const upcoming = useMemo(() => [...TOURS].sort((a, b) => a.startISO.localeCompare(b.startISO)).slice(0, 3), []);
 
   return (
     <>
-      {/* ---------- opening ---------- */}
-      <section className="relative flex min-h-screen items-end overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-5 pb-24 pt-36 lg:px-8">
-          <div className="grid items-end gap-14 lg:grid-cols-[1.25fr_0.75fr]">
-            <div>
-              <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-                <span className="relative flex h-2 w-2">
-                  <span className="pulse-ring absolute h-2 w-2 rounded-full bg-nebula" />
-                  <span className="h-2 w-2 rounded-full bg-nebula" />
-                </span>
-                <ScrambleText text="Обсерватория «Пульсар» · Архыз · Бортль 2" delay={200} />
-              </p>
-
-              <h1 className="mt-8 font-display text-[clamp(2.3rem,6.2vw,5.2rem)] font-bold uppercase leading-[1.05] tracking-tight">
-                <MaskLines
-                  delay={300}
-                  lines={[
-                    <span key="1">Там, где гаснет</span>,
-                    <span key="2">город, —</span>,
-                    <span key="3" className="text-amberstar">начинается небо</span>,
-                  ]}
-                />
-              </h1>
-
-              <Reveal delay={750} className="mt-8 max-w-xl">
-                <p className="text-base leading-relaxed text-dim lg:text-lg">
-                  Экспедиции на плато Шон-Хорук, где SQM&nbsp;21.9 и 214 ясных ночей в году. Телескопы, лекции у костра
-                  и Млечный Путь, который видно невооружённым глазом — от новичка до астрофотографа.
-                </p>
-              </Reveal>
-
-              <Reveal delay={900} className="mt-10 flex flex-wrap items-center gap-4">
-                <Link
-                  to="/tours"
-                  className="group flex items-center gap-3 bg-amberstar px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(244,198,109,0.55)]"
-                >
-                  Выбрать экспедицию
-                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
-                <Link
-                  to="/calendar"
-                  className="border border-line px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] text-dim transition-all duration-300 hover:border-nebula/60 hover:text-nebula"
-                >
-                  Календарь неба 2026
-                </Link>
-              </Reveal>
-
-              <Reveal delay={1050} className="mt-12 flex flex-wrap gap-x-8 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-                <span>Ближайшее новолуние — <span className="text-star">{ruDate(newMoon)}</span></span>
-                <span>Персеиды + новолуние — <span className="text-amberstar">12–13 августа</span></span>
-              </Reveal>
-            </div>
-
-            {/* live sky panel */}
-            <Reveal delay={600}>
-              <div className="relative border border-line bg-night-900/70 p-7 backdrop-blur-sm">
-                <span className="absolute -top-px left-8 h-px w-16 bg-amberstar" />
-                <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-faint">Сейчас над хребтом</p>
-                <div className="mt-6 flex items-center gap-5">
-                  <MoonDisc phase={mp.phase} size={84} className="float-y shrink-0" />
-                  <div>
-                    <p className="font-display text-xl font-bold">{mp.name}</p>
-                    <p className="mt-1 font-mono text-xs text-dim">освещённость {(mp.illum * 100).toFixed(0)}%</p>
-                  </div>
-                </div>
-                <div className="mt-6 h-1.5 w-full overflow-hidden bg-night-800">
-                  <div className="h-full bg-gradient-to-r from-amberstar/70 to-amberstar transition-all duration-1000" style={{ width: `${Math.max(3, mp.illum * 100)}%` }} />
-                </div>
-                <div className="mt-6 space-y-4 border-t border-line pt-5">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <span className="text-sm text-dim">Видимость глубокого неба</span>
-                    <span className={`font-mono text-xs uppercase tracking-[0.14em] ${TONE_TEXT[quality.tone]}`}>{quality.label}</span>
-                  </div>
-                  <p className="text-xs leading-relaxed text-faint">{quality.note}</p>
-                  <div className="grid grid-cols-3 gap-3 pt-1 text-center">
-                    {[
-                      ["SQM", "21.9"],
-                      ["Бортль", "2"],
-                      ["Высота", "2100 м"],
-                    ].map(([k, v]) => (
-                      <div key={k} className="border border-line bg-night-950/60 py-3">
-                        <p className="font-display text-base font-bold text-star">{v}</p>
-                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">{k}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-
-        <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 md:flex">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-faint">листайте</span>
-          <div className="h-12 w-px overflow-hidden bg-line">
-            <div className="scroll-cue h-full w-full bg-amberstar" />
-          </div>
-        </div>
-      </section>
-
-      <Ticker items={tickerItems} />
-
-      {/* ---------- dark stats ---------- */}
-      <section className="mx-auto max-w-7xl px-5 py-28 lg:px-8">
-        <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="lg:sticky lg:top-32 lg:self-start">
+      {/* ---------- открытие: дорога ---------- */}
+      <section className="relative mx-auto max-w-7xl px-5 pt-32 lg:px-8 lg:pt-40">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+          <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-              <ScrambleText text="01 · Почему темнота — ресурс" />
+              <ScrambleText text="Клуб автомобильных экспедиций · с 2016 года" />
             </p>
-            <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-              <MaskLines lines={[<span key="1">Тьма —</span>, <span key="2">самый дефицитный</span>, <span key="3">ресурс планеты</span>]} />
-            </h2>
-            <Reveal delay={200} className="mt-7 max-w-md space-y-4 text-sm leading-relaxed text-dim">
-              <p>
-                Треть человечества не видела Млечный Путь ни разу. В России зон уровня Бортль 2 — меньше десятка,
-                и наша площадка на Шон-Хоруке — одна из них.
-              </p>
-              <p>
-                Мы держим её тёмной: ни одного фонаря без красного фильтра, генераторы за гребнем,
-                а до ближайшего города — 90 минут серпантина.
+            <h1 className="mt-7 font-display text-[clamp(2.4rem,6vw,5rem)] uppercase leading-[1.04] tracking-tight">
+              <MaskLines
+                lines={[
+                  <span key="1">Дорога —</span>,
+                  <span key="2">это не путь,</span>,
+                  <span key="3" className="text-amberstar">это событие</span>,
+                ]}
+              />
+            </h1>
+            <Reveal delay={420} className="mt-8 max-w-xl">
+              <p className="text-sm leading-relaxed text-dim lg:text-base">
+                Серпантины Кавказа, лёд Байкала и большие кольца страны. Флот из 18 машин, гиды-штурманы по рации
+                и техничка, которая ещё ни разу не понадобилась — но всегда едет с нами.
               </p>
             </Reveal>
-            <Reveal delay={300} className="mt-8">
-              <Link to="/about" className="group inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.18em] text-amberstar">
-                Как мы нашли это небо
+            <Reveal delay={540} className="mt-10 flex flex-wrap gap-4">
+              <Link
+                to="/tours"
+                className="group flex items-center gap-3 bg-amberstar px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(242,163,60,0.55)]"
+              >
+                Выбрать экспедицию
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <Link
+                to="/calendar"
+                className="border border-line px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] text-dim transition-all duration-300 hover:border-amberstar/60 hover:text-star"
+              >
+                Календарь сезона
               </Link>
             </Reveal>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {STATS.map((s, i) => (
-              <StatBlock key={s.label} {...s} delay={i * 90} />
+          <LivePanel />
+        </div>
+
+        <div className="mt-16 flex items-center gap-4 lg:mt-20">
+          <span className="h-14 w-px overflow-hidden bg-line">
+            <span className="scroll-cue block h-full w-px bg-amberstar" />
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-faint">листайте — дальше маршрут</span>
+        </div>
+      </section>
+
+      {/* ---------- тикер ---------- */}
+      <div className="mt-14">
+        <Ticker items={TICKER} />
+      </div>
+
+      {/* ---------- счётчики ---------- */}
+      <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-24">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {STATS.map((s, i) => (
+            <Stat key={s.label} value={s.value} suffix={"suffix" in s ? s.suffix : ""} label={s.label} note={s.note} delay={i * 90} />
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- ближайшие заезды ---------- */}
+      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
+              <ScrambleText text="Ближайшие заезды" />
+            </p>
+            <h2 className="mt-5 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
+              <MaskLines lines={[<span key="1">Куда едем</span>, <span key="2" className="text-amberstar">в этот раз</span>]} />
+            </h2>
+          </div>
+          <Link to="/tours" className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-dim transition-colors hover:text-amberstar">
+            Все экспедиции
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </Link>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          {upcoming.map((t, i) => {
+            const soldPct = Math.round(((t.spotsTotal - t.spotsLeft) / t.spotsTotal) * 100);
+            return (
+              <Reveal key={t.id} delay={i * 110}>
+                <Link
+                  to={`/booking?tour=${t.id}`}
+                  className="group flex h-full flex-col border border-line bg-night-900/60 p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-amberstar/50 hover:bg-night-850"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-display text-3xl font-bold text-amberstar">{t.dayNum}</p>
+                      <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.24em] text-faint">{t.monthShort} 2026</p>
+                    </div>
+                    <span className="border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
+                      {t.format}
+                    </span>
+                  </div>
+                  <h3 className="mt-6 font-display text-lg font-semibold leading-snug transition-colors duration-300 group-hover:text-amberstar">
+                    {t.title}
+                  </h3>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-dim">
+                    <IconPin className="h-3.5 w-3.5 shrink-0 text-nebula" />
+                    {t.location}
+                  </p>
+                  <div className="mt-5 flex items-center justify-between border-t border-line pt-5">
+                    <span className="font-display text-lg text-star">{fmtPrice(t.price)}</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">осталось {t.spotsLeft} мест</span>
+                  </div>
+                  <div className="mt-3 h-1 w-full bg-line">
+                    <div
+                      className={`h-full transition-all duration-700 ${t.spotsLeft <= 4 ? "bg-ember" : "bg-amberstar"}`}
+                      style={{ width: `${soldPct}%` }}
+                    />
+                  </div>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ---------- что ждёт на маршруте ---------- */}
+      <section className="mt-24 border-y border-line bg-night-900/40">
+        <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
+              <ScrambleText text="Шесть причин завести мотор" />
+            </p>
+            <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
+              <MaskLines lines={[<span key="1">Что вас ждёт</span>, <span key="2">на маршруте</span>]} />
+            </h2>
+          </div>
+
+          <div className="mt-12 flex flex-wrap gap-3">
+            {HIGHLIGHTS.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => setActive(o.id)}
+                className={`border px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] transition-all duration-300 ${
+                  active === o.id
+                    ? "border-amberstar bg-amberstar font-semibold text-night-950"
+                    : "border-line text-dim hover:border-amberstar/50 hover:text-star"
+                }`}
+              >
+                {o.name.split(",")[0]}
+              </button>
             ))}
+          </div>
+
+          <div key={current.id} className="anim-fadeup mt-10">
+            <HighlightObject o={current} />
           </div>
         </div>
       </section>
 
-      {/* ---------- nearest expeditions ---------- */}
-      <section className="border-y border-line bg-night-900/40">
-        <div className="mx-auto max-w-7xl px-5 py-28 lg:px-8">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-                <ScrambleText text="02 · Ближайшие экспедиции" />
+      {/* ---------- панорама ---------- */}
+      <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <Reveal className="kenburns relative h-[46vh] overflow-hidden border border-line lg:h-[60vh]">
+            <img src={SERPENTINE_IMG} alt="Серпантин на перевал Пхия в золотой час" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-night-950/85 via-transparent to-transparent" />
+            <p className="absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.22em] text-dim">
+              Перевал Пхия · 2100 м · золотой час
+            </p>
+          </Reveal>
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
+              <ScrambleText text="Философия клуба" />
+            </p>
+            <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
+              <MaskLines lines={[<span key="1">Можно доехать.</span>, <span key="2">А можно —</span>, <span key="3" className="text-amberstar">приехать</span>]} />
+            </h2>
+            <Reveal delay={200} className="mt-7 space-y-4 text-sm leading-relaxed text-dim lg:text-base">
+              <p>
+                Навигатор проложит маршрут быстрее. Мы проложим — красивее: через перевал, где ловится радио
+                только на серпантине, через паром, который ходит дважды в день, через двор, где пахнет шашлыком.
               </p>
-              <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-                <MaskLines lines={[<span key="1">Небо уже</span>, <span key="2" className="text-amberstar">расписано</span>]} />
+              <p>
+                Каждая экспедиция «Апекса» собирается как маршрут ралли: чекпоинты, легенда, резерв по топливу
+                и обязательная точка, где все выйдут из машин молча.
+              </p>
+            </Reveal>
+            <Reveal delay={320} className="mt-8 flex items-center gap-5">
+              <IconUsers className="h-8 w-8 text-amberstar" />
+              <p className="max-w-sm text-sm text-dim">
+                Колонна до шести машин, рация в каждой, штурман на головной. Свой автомобиль — тоже в строю.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- призыв ---------- */}
+      <section className="mx-auto max-w-7xl px-5 pb-4 lg:px-8">
+        <Reveal className="relative overflow-hidden border border-amberstar/40 bg-night-900/70 px-8 py-14 lg:px-14">
+          <svg viewBox="0 0 600 120" className="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full opacity-20" aria-hidden="true">
+            <path d="M-10 110 C 120 100, 160 60, 260 55 S 460 60, 610 10" fill="none" stroke="#f2a33c" strokeWidth="2" className="dashline" />
+          </svg>
+          <div className="relative flex flex-wrap items-center justify-between gap-8">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amberstar">
+                <ScrambleText text="Клуб открыт для новых экипажей" />
+              </p>
+              <h2 className="mt-5 font-display text-2xl font-bold uppercase leading-tight lg:text-4xl">
+                Свободные места тают быстрее,
+                <br />
+                чем резина на треке
               </h2>
             </div>
-            <Link to="/tours" className="group mb-1 inline-flex items-center gap-2 border border-line px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-dim transition-all duration-300 hover:border-amberstar/60 hover:text-amberstar">
-              Все 7 экспедиций
+            <Link
+              to="/booking"
+              className="group flex items-center gap-3 bg-amberstar px-8 py-5 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(242,163,60,0.55)]"
+            >
+              Забронировать место
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
-
-          <div className="mt-14">
-            {upcoming.map((t, i) => (
-              <Reveal key={t.id} delay={i * 80}>
-                <Link
-                  to="/tours"
-                  className="group grid grid-cols-[72px_1fr] items-center gap-5 border-t border-line py-7 transition-colors duration-300 last:border-b hover:bg-night-850/70 sm:grid-cols-[90px_1fr_auto] sm:gap-8 lg:px-4"
-                >
-                  <div className="text-center">
-                    <p className="font-display text-3xl font-bold text-star transition-colors duration-300 group-hover:text-amberstar">{t.dayNum}</p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-faint">{t.monthShort}</p>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-display text-base font-semibold leading-snug lg:text-lg">{t.title}</p>
-                    <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
-                      {t.location} · {t.days} дн · {t.format}
-                    </p>
-                  </div>
-                  <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:justify-end">
-                    <p className="font-display text-lg font-bold text-star">{fmtPrice(t.price)}</p>
-                    <span className={`flex h-10 w-10 items-center justify-center border border-line transition-all duration-300 group-hover:border-amberstar group-hover:bg-amberstar group-hover:text-night-950 ${""}`}>
-                      <ArrowUpRight className="h-4 w-4" />
-                    </span>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- sky objects ---------- */}
-      <section className="mx-auto max-w-7xl px-5 py-28 lg:px-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-          <ScrambleText text="03 · Каталог ночи" />
-        </p>
-        <h2 className="mt-6 max-w-2xl font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-          <MaskLines lines={[<span key="1">Что вы увидите</span>, <span key="2">в первый же вечер</span>]} />
-        </h2>
-
-        <div className="mt-14 grid gap-10 lg:grid-cols-2">
-          <div>
-            {SKY_OBJECTS.map((o) => (
-              <button
-                key={o.id}
-                onMouseEnter={() => setActiveObj(o)}
-                onFocus={() => setActiveObj(o)}
-                onClick={() => setActiveObj(o)}
-                className={`group flex w-full items-center justify-between gap-4 border-t border-line px-2 py-5 text-left transition-all duration-300 last:border-b ${
-                  activeObj.id === o.id ? "bg-night-850/80" : "hover:bg-night-900/60"
-                }`}
-              >
-                <span className="flex items-center gap-4">
-                  <span className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeObj.id === o.id ? "bg-amberstar" : "bg-line"}`} />
-                  <span className={`font-display text-sm font-semibold transition-colors duration-300 lg:text-base ${activeObj.id === o.id ? "text-amberstar" : "text-star"}`}>
-                    {o.name}
-                  </span>
-                </span>
-                <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">{o.magnitude}</span>
-              </button>
-            ))}
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-              * список меняется от сезона — в январе вместо Ориона царствует Юпитер
-            </p>
-          </div>
-
-          <div className="lg:sticky lg:top-32 lg:self-start">
-            <div key={activeObj.id} className="anim-fadeup border border-line bg-night-900/70 p-8 lg:p-10">
-              <div className="flex items-start justify-between gap-6">
-                <ActiveIcon className="h-16 w-16 text-amberstar lg:h-20 lg:w-20" />
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-faint">сейчас: {activeObj.best}</p>
-              </div>
-              <h3 className="mt-6 font-display text-xl font-bold lg:text-2xl">{activeObj.name}</h3>
-              <p className="mt-1 font-mono text-xs uppercase tracking-[0.16em] text-nebula">{activeObj.magnitude}</p>
-              <p className="mt-5 text-sm leading-relaxed text-dim lg:text-base">{activeObj.desc}</p>
-              <div className="mt-8 flex gap-2">
-                {SKY_OBJECTS.map((o) => (
-                  <button
-                    key={o.id}
-                    aria-label={o.name}
-                    onClick={() => setActiveObj(o)}
-                    className={`h-1 flex-1 transition-all duration-300 ${activeObj.id === o.id ? "bg-amberstar" : "bg-line hover:bg-faint"}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- panorama ---------- */}
-      <section className="relative">
-        <Reveal className="kenburns relative h-[64vh] overflow-hidden lg:h-[76vh]">
-          <img src={MILKYWAY_IMG} alt="Ядро Млечного Пути над хребтами Архыза" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/20 to-night-950/40" />
-          <div className="absolute inset-x-0 bottom-0">
-            <div className="mx-auto max-w-7xl px-5 pb-14 lg:px-8">
-              <blockquote className="max-w-2xl">
-                <p className="font-display text-xl font-semibold leading-snug lg:text-3xl">
-                  «Выключите фонарик. Дайте глазам десять минут — и небо станет трёхмерным. Так работает тьма.»
-                </p>
-                <footer className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-                  — Анна Ветрова, астроном «Пульсара»
-                </footer>
-              </blockquote>
-            </div>
-          </div>
         </Reveal>
-        <p className="border-b border-line py-3 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
-          Панорама 240° · снято с площадки базы · июль 2025 · выдержка 20 с · f/1.8 · ISO 3200
-        </p>
-      </section>
-
-      {/* ---------- CTA ---------- */}
-      <section className="mx-auto max-w-7xl px-5 pb-8 pt-28 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-          <h2 className="font-display text-[clamp(2rem,5vw,4.2rem)] font-bold uppercase leading-[1.05]">
-            <MaskLines lines={[<span key="1">Поехали смотреть</span>, <span key="2" className="text-nebula">вверх?</span>]} />
-          </h2>
-          <div className="flex flex-col gap-4">
-            <p className="max-w-sm text-sm leading-relaxed text-dim">
-              Места на август разбирают к маю, на Геминиды — к сентябрю. Бронь занимает две минуты, предоплата — только за месяц до заезда.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/booking"
-                className="group flex items-center gap-3 bg-amberstar px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(244,198,109,0.55)]"
-              >
-                Забронировать место
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-              <Link
-                to="/tours"
-                className="border border-line px-7 py-4 text-center font-mono text-[12px] uppercase tracking-[0.18em] text-dim transition-all duration-300 hover:border-nebula/60 hover:text-nebula"
-              >
-                Смотреть маршруты
-              </Link>
-            </div>
-          </div>
-        </div>
       </section>
     </>
   );

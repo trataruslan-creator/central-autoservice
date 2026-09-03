@@ -1,8 +1,8 @@
-export const MILKYWAY_IMG =
-  "https://image.qwenlm.ai/generated-images/06aca577-c78f-4080-a003-d0898f4d3970/_result.png";
+export const SERPENTINE_IMG =
+  "https://image.qwenlm.ai/generated-images/49ce5184-59e3-4e8c-ba08-0c9386e6b8fc/_result.png";
 
-export const OBSERVER_IMG =
-  "https://image.qwenlm.ai/generated-images/837cc5a5-b51b-4ee4-afa5-677aca63adbc/_result.png";
+export const ICE_IMG =
+  "https://image.qwenlm.ai/generated-images/3e5bddfe-dbcb-4fc5-b1ef-0a333a9fae1f/_result.png";
 
-export const ORION_IMG =
-  "https://image.qwenlm.ai/generated-images/18b8e13e-e987-43c4-869e-ec26b3bf0793/_result.png";
+export const GARAGE_IMG =
+  "https://image.qwenlm.ai/generated-images/38c31242-cba4-4d2b-bef3-936623d4c1d7/_result.png";

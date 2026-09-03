@@ -1,14 +1,14 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { MaskLines, Reveal, ScrambleText, usePageTitle } from "../components/Reveal";
-import { ArrowUpRight, IconCheck, IconMinus, IconPlus, IconPin, IconTelescope, IconUsers } from "../components/Icons";
+import { ArrowUpRight, IconCheck, IconMinus, IconPlus, IconPin, IconSteering, IconUsers } from "../components/Icons";
 import { FAQS, TOURS } from "../lib/data";
-import { fmtPrice } from "../lib/astro";
+import { fmtPrice } from "../lib/drive";
 
 const LEVELS = [
-  { id: "first", label: "Первый раз смотрю в телескоп" },
-  { id: "amateur", label: "Любитель, знаю пару созвездий" },
-  { id: "pro", label: "Астрофотограф / со своим железом" },
+  { id: "first", label: "Первый раз в экспедиции" },
+  { id: "amateur", label: "Уверенный водитель, люблю серпантины" },
+  { id: "pro", label: "Езжу быстро: есть трек-опыт" },
 ];
 
 function Faq({ q, a, open, onToggle, idx }: { q: string; a: string; open: boolean; onToggle: () => void; idx: number }) {
@@ -34,7 +34,7 @@ function Faq({ q, a, open, onToggle, idx }: { q: string; a: string; open: boolea
 }
 
 export default function Booking() {
-  usePageTitle("Бронирование — Пульсар");
+  usePageTitle("Бронирование — Апекс");
   const [params] = useSearchParams();
   const initialTour = useMemo(() => {
     const t = params.get("tour");
@@ -69,7 +69,7 @@ export default function Booking() {
     const okTg = /^@?[a-zA-Z0-9_]{5,}$/.test(c);
     const okPhone = c.replace(/\D/g, "").length >= 10;
     if (!okEmail && !okTg && !okPhone) e.contact = "Нужен email, @телеграм или телефон";
-    if (!form.tour) e.tour = "Выберите экспедицию или «свои даты»";
+    if (!form.tour) e.tour = "Выберите заезд или «свои даты»";
     return e;
   };
 
@@ -80,7 +80,7 @@ export default function Booking() {
     if (Object.keys(e).length) return;
     setStatus("sending");
     window.setTimeout(() => {
-      setAppId(`PSR-2026-${String(Math.floor(1000 + Math.random() * 9000))}`);
+      setAppId(`APX-2026-${String(Math.floor(1000 + Math.random() * 9000))}`);
       setStatus("done");
     }, 900);
   };
@@ -98,7 +98,7 @@ export default function Booking() {
             <ScrambleText text="Бронирование · ответим за 2 часа" />
           </p>
           <h1 className="mt-7 font-display text-[clamp(2.1rem,5.5vw,4.4rem)] font-bold uppercase leading-[1.06] tracking-tight">
-            <MaskLines lines={[<span key="1">Застолбите</span>, <span key="2">свой кусок</span>, <span key="3" className="text-amberstar">Млечного Пути</span>]} />
+            <MaskLines lines={[<span key="1">Застолбите место</span>, <span key="2">в колонне</span>, <span key="3" className="text-amberstar">сезона-2026</span>]} />
           </h1>
         </div>
 
@@ -110,8 +110,8 @@ export default function Booking() {
               <ol className="mt-5 space-y-5">
                 {[
                   ["Заявка", "Вы оставляете контакты и пожелания — это ни к чему не обязывает"],
-                  ["Подтверждение", "Гид связывается за 2 часа, отвечает на вопросы и держит место 3 дня"],
-                  ["Предоплата", "30% за месяц до заезда. Если небо закрыто все ночи — вернём всё"],
+                  ["Подтверждение", "Штурман связывается за 2 часа, отвечает на вопросы и держит место 3 дня"],
+                  ["Предоплата", "30% за месяц до заезда. Если маршрут закрыт — вернём всё"],
                 ].map(([t, d], i) => (
                   <li key={t} className="flex gap-4">
                     <span className="font-display text-xl font-bold text-amberstar">{i + 1}</span>
@@ -127,7 +127,7 @@ export default function Booking() {
             <Reveal delay={100} className="border border-line bg-night-900/70 p-7">
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-faint">Уже входит в цену</p>
               <ul className="mt-5 space-y-2.5 text-sm text-dim">
-                {["Телескопы и бинокли на площадке", "Лектор и ночной гид", "Трансфер от Минеральных Вод", "Питание и горячие напитки всю ночь"].map((x) => (
+                {["Машина клуба и страховка", "Гид-штурман и рация", "Техничка и эвакуация", "Топливо, ночёвки и питание"].map((x) => (
                   <li key={x} className="flex items-center gap-3">
                     <IconCheck className="h-4 w-4 shrink-0 text-nebula" />
                     {x}
@@ -142,7 +142,7 @@ export default function Booking() {
                 <p className="mt-3 font-display text-base font-bold">{chosen.title}</p>
                 <div className="mt-4 space-y-2 font-mono text-xs text-dim">
                   <p className="flex items-center gap-2"><IconPin className="h-3.5 w-3.5 text-nebula" />{chosen.location}</p>
-                  <p className="flex items-center gap-2"><IconTelescope className="h-3.5 w-3.5 text-nebula" />{chosen.dateLabel} · {chosen.days} дн</p>
+                  <p className="flex items-center gap-2"><IconSteering className="h-3.5 w-3.5 text-nebula" />{chosen.dateLabel} · {chosen.days} {chosen.days === 1 ? "день" : "дн"}</p>
                   <p className="flex items-center gap-2"><IconUsers className="h-3.5 w-3.5 text-nebula" />осталось {chosen.spotsLeft} мест · {fmtPrice(chosen.price)}/чел</p>
                 </div>
               </Reveal>
@@ -162,7 +162,7 @@ export default function Booking() {
                   {[
                     ["Гость", form.name],
                     ["Связь", form.contact],
-                    ["Экспедиция", chosen ? chosen.title : "Обсудим свои даты"],
+                    ["Заезд", chosen ? chosen.title : "Обсудим свои даты"],
                     ["Состав", `${form.people} чел · ${LEVELS.find((l) => l.id === form.level)?.label.toLowerCase()}`],
                   ].map(([k, v]) => (
                     <div key={k} className="flex flex-wrap justify-between gap-2">
@@ -172,8 +172,8 @@ export default function Booking() {
                   ))}
                 </div>
                 <p className="mt-6 text-sm leading-relaxed text-dim">
-                  Гид напишет вам в течение двух часов. А пока — загляните в{" "}
-                  <Link to="/calendar" className="text-amberstar underline-offset-4 transition-colors hover:text-star hover:underline">календарь неба</Link>
+                  Штурман напишет вам в течение двух часов. А пока — загляните в{" "}
+                  <Link to="/calendar" className="text-amberstar underline-offset-4 transition-colors hover:text-star hover:underline">календарь сезона</Link>
                   : вдруг захочется приехать дважды.
                 </p>
                 <button
@@ -196,13 +196,13 @@ export default function Booking() {
                   </div>
                   <div>
                     <label htmlFor="bk-contact" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Email, @telegram или телефон *</label>
-                    <input id="bk-contact" value={form.contact} onChange={(e) => set("contact", e.target.value)} placeholder="@stargazer" className={inputCls(errors.contact)} />
+                    <input id="bk-contact" value={form.contact} onChange={(e) => set("contact", e.target.value)} placeholder="@drive_forever" className={inputCls(errors.contact)} />
                     {errors.contact && <p className="mt-2 text-xs text-flare">{errors.contact}</p>}
                   </div>
                 </div>
 
                 <div className="mt-6">
-                  <label htmlFor="bk-tour" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Экспедиция *</label>
+                  <label htmlFor="bk-tour" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Заезд *</label>
                   <div className="relative">
                     <select id="bk-tour" value={form.tour} onChange={(e) => set("tour", e.target.value)} className={`${inputCls(errors.tour)} appearance-none pr-10 ${form.tour ? "text-star" : "text-faint"}`}>
                       <option value="" disabled>Выберите заезд</option>
@@ -211,7 +211,7 @@ export default function Booking() {
                           {t.dateLabel} — {t.title} · {fmtPrice(t.price)}
                         </option>
                       ))}
-                      <option value="custom">Свои даты / индивидуальная группа</option>
+                      <option value="custom">Свои даты / корпоративная колонна</option>
                     </select>
                     <svg viewBox="0 0 12 8" className="pointer-events-none absolute right-4 top-1/2 h-2.5 w-2.5 -translate-y-1/2 text-faint">
                       <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -219,7 +219,7 @@ export default function Booking() {
                   </div>
                   {errors.tour && <p className="mt-2 text-xs text-flare">{errors.tour}</p>}
                   {form.tour === "custom" && (
-                    <p className="mt-2 text-xs text-nebula">Расскажите в комментарии, какие даты и сколько вас — подберём окно новолуния.</p>
+                    <p className="mt-2 text-xs text-nebula">Расскажите в комментарии, какие даты и сколько машин — соберём маршрут под вашу колонну.</p>
                   )}
                 </div>
 
@@ -249,7 +249,7 @@ export default function Booking() {
                 </div>
 
                 <fieldset className="mt-6">
-                  <legend className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Ваш опыт</legend>
+                  <legend className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Ваш опыт за рулём</legend>
                   <div className="grid gap-2.5">
                     {LEVELS.map((l) => (
                       <label key={l.id} className={`flex cursor-pointer items-center gap-3 border px-4 py-3 text-sm transition-all duration-300 ${form.level === l.id ? "border-amberstar/60 bg-night-850 text-star" : "border-line text-dim hover:border-faint"}`}>
@@ -265,7 +265,7 @@ export default function Booking() {
 
                 <div className="mt-6">
                   <label htmlFor="bk-comment" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.18em] text-dim">Комментарий</label>
-                  <textarea id="bk-comment" value={form.comment} onChange={(e) => set("comment", e.target.value)} rows={3} placeholder="Дети, оборудование, вопросы — всё сюда" className={`${inputCls()} resize-none`} />
+                  <textarea id="bk-comment" value={form.comment} onChange={(e) => set("comment", e.target.value)} rows={3} placeholder="Своя машина, дети, вопросы — всё сюда" className={`${inputCls()} resize-none`} />
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
@@ -275,7 +275,7 @@ export default function Booking() {
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className="group flex items-center gap-3 bg-amberstar px-8 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(244,198,109,0.55)] disabled:cursor-wait disabled:opacity-70"
+                    className="group flex items-center gap-3 bg-amberstar px-8 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(242,163,60,0.55)] disabled:cursor-wait disabled:opacity-70"
                   >
                     {status === "sending" ? (
                       <>
@@ -304,12 +304,12 @@ export default function Booking() {
               <ScrambleText text="Частые вопросы" />
             </p>
             <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.4rem]">
-              <MaskLines lines={[<span key="1">Спрашивают</span>, <span key="2">перед первой ночью</span>]} />
+              <MaskLines lines={[<span key="1">Спрашивают</span>, <span key="2">перед первым заездом</span>]} />
             </h2>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-dim">
               Не нашли ответ — напишите в телеграм{" "}
-              <a href="https://t.me/pulsar_sky" target="_blank" rel="noreferrer" className="text-amberstar underline-offset-4 hover:underline">@pulsar_sky</a>,
-              дежурный гид на связи круглосуточно.
+              <a href="https://t.me/apex_drive" target="_blank" rel="noreferrer" className="text-amberstar underline-offset-4 hover:underline">@apex_drive</a>,
+              дежурный штурман на связи круглосуточно.
             </p>
           </div>
           <div className="space-y-3">
