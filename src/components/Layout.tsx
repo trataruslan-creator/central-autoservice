@@ -378,10 +378,6 @@ function Footer() {
         </div>
       </div>
 
-      <div className="pointer-events-none select-none overflow-hidden">
-        <p className="text-outline whitespace-nowrap text-center font-display text-[16vw] font-semibold uppercase leading-[0.82]">Центральный</p>
-      </div>
-
       <div className="relative border-t border-linedark">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 font-mono text-[10px] uppercase tracking-[0.16em] text-mutd/60 lg:px-8">
           <span>© 2016–2026 · Автосервис «Центральный» · Истра</span>
