@@ -1,387 +1,447 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import Ticker from "../components/Ticker";
+import JobBoard from "../components/JobBoard";
+import Estimator from "../components/Estimator";
 import { Reveal, MaskLines, ScrambleText, useCountUp, usePageTitle } from "../components/Reveal";
-import { ArrowUpRight, ObjectIcon, IconPin, IconSteering, IconUsers } from "../components/Icons";
-import { EVENTS, HIGHLIGHTS, STATS, TOURS, type Highlight } from "../lib/data";
-import { fmtPrice, pad, seasonInfo } from "../lib/drive";
-import { SERPENTINE_IMG } from "../lib/images";
+import { useBooking } from "../components/Layout";
+import {
+  ArrowUpRight, IconCamera, IconCheck, IconChecklist, IconDoc, IconPhone, IconPin, IconShield,
+  IconWash, IconWhatsApp, SERVICE_ICON,
+} from "../components/Icons";
+import { BRANDS, COMPARE, PARTNERS, PHONE_DISPLAY, PHONE_TEL, REVIEWS, SERVICES, STATS, WHATSAPP } from "../lib/data";
+import { fmtPrice } from "../lib/util";
 
-const TICKER = [
-  "Moscow Raceway: сухо · асфальт +18°C",
-  "Ближайший заезд — 14 августа, Архыз",
-  "Baikal Ice Cup: открыта регистрация",
-  "Флот на ходу: 18 из 18 машин",
-  "Новичкам — контраварийный курс в подарок",
-  "4 июля едем смотреть «Шёлковый путь»",
-  "Сентябрь: золотые серпантины Кавказа",
-];
+function BrandTicker() {
+  return (
+    <div className="relative z-10 overflow-hidden border-y border-linedark bg-ink-950/70">
+      {[false, true].map((rev, row) => (
+        <div key={row} className={`ticker ${rev ? "ticker-rev" : ""} border-b border-linedark/60 last:border-b-0`}>
+          <div className="ticker-track" style={{ animationDuration: rev ? "58s" : "46s" }}>
+            {[0, 1].map((dup) => (
+              <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1 || undefined}>
+                {BRANDS.slice(row ? 25 : 0, row ? undefined : 25).map((b) => (
+                  <span key={b + dup} className="flex items-center gap-3 whitespace-nowrap px-6 py-3 font-display text-sm uppercase tracking-[0.14em] text-mutd">
+                    <span className="h-1 w-1 bg-amber" />
+                    {b}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function Stat({ value, suffix, label, note, delay }: { value: number; suffix: string; label: string; note: string; delay: number }) {
-  const { ref, val } = useCountUp(value, 1600);
+  const { ref, val } = useCountUp(value, 1500);
   return (
-    <Reveal delay={delay} className="group border-l-2 border-line pl-6 transition-colors duration-500 hover:border-amberstar">
-      <p className="font-display text-4xl font-bold text-star lg:text-5xl">
+    <Reveal delay={delay} className="group border-l-2 border-linedark pl-5 transition-colors duration-500 hover:border-amber">
+      <p className="font-display text-3xl font-semibold text-star lg:text-4xl">
         <span ref={ref}>{new Intl.NumberFormat("ru-RU").format(val)}</span>
-        {suffix && <span className="text-amberstar">{suffix}</span>}
+        {suffix && <span className="text-amber">{suffix}</span>}
       </p>
-      <p className="mt-3 text-sm font-semibold text-star">{label}</p>
-      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">{note}</p>
+      <p className="mt-2 text-sm font-semibold text-star">{label}</p>
+      <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mutd">{note}</p>
     </Reveal>
   );
 }
 
-function LivePanel() {
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const next = useMemo(() => {
-    const sorted = [...TOURS].sort((a, b) => a.startISO.localeCompare(b.startISO));
-    return sorted.find((t) => new Date(t.startISO).getTime() > now.getTime());
-  }, [now]);
-
-  const season = seasonInfo(now);
-  let diff = next ? Math.max(0, new Date(next.startISO).getTime() - now.getTime()) : 0;
-  const d = Math.floor(diff / 86_400_000);
-  diff -= d * 86_400_000;
-  const h = Math.floor(diff / 3_600_000);
-  diff -= h * 3_600_000;
-  const m = Math.floor(diff / 60_000);
-  const s = Math.floor((diff - m * 60_000) / 1000);
-
-  return (
-    <div className="anim-fadeup relative border border-line bg-night-900/70 backdrop-blur-sm" style={{ animationDelay: "350ms" }}>
-      <div className="flex items-center justify-between border-b border-line px-6 py-4">
-        <span className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-dim">
-          <span className="relative flex h-2 w-2">
-            <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-nebula" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-nebula" />
-          </span>
-          Сейчас в клубе
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
-          {season.name} · {season.label}
-        </span>
-      </div>
-
-      <div className="grid gap-6 p-6">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">Местное время базы</p>
-            <p className="mt-1 font-display text-3xl tabular-nums text-star lg:text-4xl">
-              {pad(now.getHours())}:{pad(now.getMinutes())}
-              <span className="text-amberstar">:{pad(now.getSeconds())}</span>
-            </p>
-          </div>
-          <IconSteering className="spin-slow h-10 w-10 text-line" />
-        </div>
-
-        <div className="border-t border-line pt-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">До ближайшего заезда</p>
-          {next ? (
-            <>
-              <p className="mt-2 font-display text-2xl tabular-nums text-amberstar lg:text-3xl">
-                {d} дн {pad(h)}:{pad(m)}:{pad(s)}
-              </p>
-              <p className="mt-2 text-sm text-dim">
-                {next.title} · {next.location}
-              </p>
-            </>
-          ) : (
-            <p className="mt-2 text-sm text-dim">Заезды сезона-2026 стартовали — смотрите календарь</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 border-t border-line pt-5">
-          <div>
-            <p className="font-display text-2xl text-star">{TOURS.length}</p>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">заездов в сезоне</p>
-          </div>
-          <div>
-            <p className="font-display text-2xl text-star">{EVENTS.length}</p>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">событий в календаре</p>
-          </div>
-        </div>
-
-        <Link
-          to="/booking"
-          className="group flex items-center justify-between border border-line bg-night-950/60 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-star transition-all duration-300 hover:border-amberstar/60 hover:text-amberstar"
-        >
-          Занять место в колонне
-          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function HighlightObject({ o }: { o: Highlight }) {
-  return (
-    <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="min-h-[280px]">
-        <ObjectIcon kind={o.icon} className="h-16 w-16 text-amberstar" />
-        <h3 className="mt-6 font-display text-2xl font-bold text-star lg:text-4xl">{o.name}</h3>
-        <div className="mt-4 flex flex-wrap gap-2.5">
-          <span className="border border-nebula/50 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-nebula">нужно: {o.need}</span>
-          <span className="border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-dim">{o.best}</span>
-        </div>
-        <p className="mt-6 max-w-lg text-sm leading-relaxed text-dim lg:text-base">{o.desc}</p>
-      </div>
-      <div className="relative overflow-hidden border border-line bg-night-900/50">
-        <svg viewBox="0 0 400 280" className="h-full w-full" aria-hidden="true">
-          <defs>
-            <linearGradient id="roadg" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0%" stopColor="#f2a33c" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#e2593f" stopOpacity="0.15" />
-            </linearGradient>
-          </defs>
-          <path d="M-10 250 C 80 240, 90 190, 150 170 S 260 150, 290 110 S 330 40, 410 20" fill="none" stroke="#2b2e39" strokeWidth="26" strokeLinecap="round" />
-          <path d="M-10 250 C 80 240, 90 190, 150 170 S 260 150, 290 110 S 330 40, 410 20" fill="none" stroke="url(#roadg)" strokeWidth="2.4" className="dashline" />
-          <circle cx="150" cy="170" r="4" fill="#f2a33c" />
-          <circle cx="290" cy="110" r="4" fill="#e2593f" />
-          <text x="150" y="196" textAnchor="middle" fill="#666d7d" fontSize="9" fontFamily="JetBrains Mono, monospace" letterSpacing="2">ЧЕКПОИНТ 1</text>
-          <text x="290" y="90" textAnchor="middle" fill="#666d7d" fontSize="9" fontFamily="JetBrains Mono, monospace" letterSpacing="2">ЧЕКПОИНТ 2</text>
-        </svg>
-        <div className="absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
-          0{HIGHLIGHTS.findIndex((x) => x.id === o.id) + 1} / 0{HIGHLIGHTS.length}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
-  usePageTitle("Апекс — клуб автомобильных экспедиций");
-  const [active, setActive] = useState(HIGHLIGHTS[0].id);
-  const current = HIGHLIGHTS.find((o) => o.id === active) ?? HIGHLIGHTS[0];
-
-  const upcoming = useMemo(() => [...TOURS].sort((a, b) => a.startISO.localeCompare(b.startISO)).slice(0, 3), []);
+  usePageTitle("Автосервис «Центральный» в Истре — качество дилера, цена гаража");
+  const { openBooking } = useBooking();
+  const [reviewIdx, setReviewIdx] = useState(0);
+  const popular = SERVICES.filter((s) => s.popular).slice(0, 6);
+  const review = REVIEWS[reviewIdx];
 
   return (
     <>
-      {/* ---------- открытие: дорога ---------- */}
-      <section className="relative mx-auto max-w-7xl px-5 pt-32 lg:px-8 lg:pt-40">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+      {/* ---------- открытие: ремзона ---------- */}
+      <section className="relative mx-auto max-w-7xl px-4 pt-28 sm:px-5 lg:px-8 lg:pt-36">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-              <ScrambleText text="Клуб автомобильных экспедиций · с 2016 года" />
+            <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.24em] text-steel">
+              <span className="hazard inline-block h-2.5 w-10" />
+              <ScrambleText text="Автосервис · Истра, д. Высоково" />
             </p>
-            <h1 className="mt-7 font-display text-[clamp(2.4rem,6vw,5rem)] uppercase leading-[1.04] tracking-tight">
+            <h1 className="mt-6 font-display text-[clamp(2.3rem,6.2vw,4.6rem)] font-semibold uppercase leading-[1.02] tracking-tight">
               <MaskLines
                 lines={[
-                  <span key="1">Дорога —</span>,
-                  <span key="2">это не путь,</span>,
-                  <span key="3" className="text-amberstar">это событие</span>,
+                  <span key="1">Качество дилера.</span>,
+                  <span key="2">Цена — <span className="text-amber">гаража.</span></span>,
+                  <span key="3">Честность — наша.</span>,
                 ]}
               />
             </h1>
-            <Reveal delay={420} className="mt-8 max-w-xl">
-              <p className="text-sm leading-relaxed text-dim lg:text-base">
-                Серпантины Кавказа, лёд Байкала и большие кольца страны. Флот из 18 машин, гиды-штурманы по рации
-                и техничка, которая ещё ни разу не понадобилась — но всегда едет с нами.
+            <Reveal delay={420} className="mt-7 max-w-xl">
+              <p className="text-sm leading-relaxed text-mutd lg:text-base">
+                Диагностика на дилерских сканерах, сход-развал на стенде 2024 года, сроки — в акте под подпись,
+                а ремзона — под камерами, которые видно из зоны ожидания. 51 марка, от Lada до Zeekr.
               </p>
             </Reveal>
-            <Reveal delay={540} className="mt-10 flex flex-wrap gap-4">
-              <Link
-                to="/tours"
-                className="group flex items-center gap-3 bg-amberstar px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(242,163,60,0.55)]"
+            <Reveal delay={540} className="mt-9 flex flex-wrap gap-4">
+              <button
+                onClick={() => openBooking()}
+                className="group flex items-center gap-3 bg-amber px-7 py-4 font-display text-base font-semibold uppercase tracking-[0.06em] text-ink-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(245,165,36,0.5)]"
               >
-                Выбрать экспедицию
+                Записаться на сервис
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-              <Link
-                to="/calendar"
-                className="border border-line px-7 py-4 font-mono text-[12px] uppercase tracking-[0.18em] text-dim transition-all duration-300 hover:border-amberstar/60 hover:text-star"
+              </button>
+              <a
+                href={PHONE_TEL}
+                className="flex items-center gap-3 border border-linedark px-7 py-4 font-mono text-sm text-star transition-all duration-300 hover:border-amber hover:text-amber"
               >
-                Календарь сезона
-              </Link>
+                <IconPhone className="h-4 w-4" />
+                {PHONE_DISPLAY}
+              </a>
+            </Reveal>
+            <Reveal delay={660} className="mt-10 flex flex-wrap gap-2.5">
+              {["Техосмотр по ГОСТу", "Сход-развал 3D · 2024", "Видеонаблюдение ремзоны", "Акт со сроком выдачи"].map((c) => (
+                <span key={c} className="flex items-center gap-2 border border-linedark bg-ink-950/50 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-mutd">
+                  <IconCheck className="h-3.5 w-3.5 text-go" />
+                  {c}
+                </span>
+              ))}
             </Reveal>
           </div>
-          <LivePanel />
+          <Reveal delay={300}>
+            <JobBoard />
+          </Reveal>
         </div>
 
-        <div className="mt-16 flex items-center gap-4 lg:mt-20">
-          <span className="h-14 w-px overflow-hidden bg-line">
-            <span className="scroll-cue block h-full w-px bg-amberstar" />
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-faint">листайте — дальше маршрут</span>
-        </div>
-      </section>
-
-      {/* ---------- тикер ---------- */}
-      <div className="mt-14">
-        <Ticker items={TICKER} />
-      </div>
-
-      {/* ---------- счётчики ---------- */}
-      <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-24">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
           {STATS.map((s, i) => (
-            <Stat key={s.label} value={s.value} suffix={"suffix" in s ? s.suffix : ""} label={s.label} note={s.note} delay={i * 90} />
+            <Stat key={s.label} value={s.value} suffix={s.suffix} label={s.label} note={s.note} delay={i * 90} />
           ))}
         </div>
       </section>
 
-      {/* ---------- ближайшие заезды ---------- */}
-      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-              <ScrambleText text="Ближайшие заезды" />
-            </p>
-            <h2 className="mt-5 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-              <MaskLines lines={[<span key="1">Куда едем</span>, <span key="2" className="text-amberstar">в этот раз</span>]} />
-            </h2>
-          </div>
-          <Link to="/tours" className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-dim transition-colors hover:text-amberstar">
-            Все экспедиции
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </Link>
-        </div>
+      {/* ---------- марки ---------- */}
+      <div className="mt-16">
+        <BrandTicker />
+      </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {upcoming.map((t, i) => {
-            const soldPct = Math.round(((t.spotsTotal - t.spotsLeft) / t.spotsTotal) * 100);
-            return (
-              <Reveal key={t.id} delay={i * 110}>
-                <Link
-                  to={`/booking?tour=${t.id}`}
-                  className="group flex h-full flex-col border border-line bg-night-900/60 p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-amberstar/50 hover:bg-night-850"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-display text-3xl font-bold text-amberstar">{t.dayNum}</p>
-                      <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.24em] text-faint">{t.monthShort} 2026</p>
-                    </div>
-                    <span className="border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
-                      {t.format}
+      {/* ---------- услуги: ведомость ---------- */}
+      <section className="mt-20 bg-paper text-inktext">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8 lg:py-24">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber2">
+                <ScrambleText text="Прайс-ведомость · 14 видов работ" />
+              </p>
+              <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
+                <MaskLines lines={[<span key="1">С чем приезжают</span>, <span key="2">чаще всего</span>]} />
+              </h2>
+            </div>
+            <Link to="/uslugi" className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-mut transition-colors hover:text-inktext">
+              Все услуги и цены
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </Link>
+          </div>
+
+          <div className="mt-12">
+            {popular.map((s, i) => {
+              const Ico = SERVICE_ICON[s.id];
+              return (
+                <Reveal key={s.id} delay={i * 60}>
+                  <button
+                    onClick={() => openBooking(s.id)}
+                    className="group grid w-full grid-cols-[44px_1fr_auto] items-center gap-4 border-t border-ink-950/10 py-5 text-left transition-all duration-300 last:border-b hover:bg-card hover:px-4 sm:grid-cols-[56px_1.2fr_1fr_auto] sm:gap-6"
+                  >
+                    <span className="flex h-11 w-11 items-center justify-center border border-ink-950/15 text-inktext transition-all duration-300 group-hover:border-amber2 group-hover:bg-amber2 group-hover:text-paper">
+                      {Ico && <Ico className="h-5 w-5" />}
                     </span>
-                  </div>
-                  <h3 className="mt-6 font-display text-lg font-semibold leading-snug transition-colors duration-300 group-hover:text-amberstar">
-                    {t.title}
-                  </h3>
-                  <p className="mt-2 flex items-center gap-2 text-sm text-dim">
-                    <IconPin className="h-3.5 w-3.5 shrink-0 text-nebula" />
-                    {t.location}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between border-t border-line pt-5">
-                    <span className="font-display text-lg text-star">{fmtPrice(t.price)}</span>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">осталось {t.spotsLeft} мест</span>
-                  </div>
-                  <div className="mt-3 h-1 w-full bg-line">
-                    <div
-                      className={`h-full transition-all duration-700 ${t.spotsLeft <= 4 ? "bg-ember" : "bg-amberstar"}`}
-                      style={{ width: `${soldPct}%` }}
-                    />
-                  </div>
-                </Link>
-              </Reveal>
-            );
-          })}
+                    <span>
+                      <span className="font-display text-lg font-medium uppercase tracking-wide lg:text-xl">{s.title}</span>
+                      <span className="mt-0.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-mut">{s.time}</span>
+                    </span>
+                    <span className="hidden max-w-xs text-sm leading-relaxed text-mut sm:block">{s.short}</span>
+                    <span className="text-right">
+                      <span className="block font-display text-lg font-semibold text-inktext lg:text-xl">{fmtPrice(s.priceFrom)}</span>
+                      <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-mut">от · с запчастями уточним</span>
+                    </span>
+                  </button>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          <Reveal delay={200} className="mt-10 flex flex-wrap items-center justify-between gap-4 border border-ink-950/10 bg-card px-6 py-5">
+            <p className="max-w-xl text-sm leading-relaxed text-mut">
+              Не нашли свою работу? Позвоните — скажем цену по телефону за пару минут, а не «посмотрим, перезвоним».
+            </p>
+            <a href={PHONE_TEL} className="flex items-center gap-2 font-display text-base font-semibold uppercase tracking-wide text-amber2 transition-colors hover:text-inktext">
+              {PHONE_DISPLAY}
+              <IconPhone className="h-4 w-4" />
+            </a>
+          </Reveal>
         </div>
       </section>
 
-      {/* ---------- что ждёт на маршруте ---------- */}
-      <section className="mt-24 border-y border-line bg-night-900/40">
-        <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+      {/* ---------- калькулятор ---------- */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8 lg:py-24">
+        <Estimator />
+      </section>
+
+      {/* ---------- дилер vs гараж ---------- */}
+      <section className="bg-paper text-inktext">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8 lg:py-24">
           <div className="max-w-2xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-              <ScrambleText text="Шесть причин завести мотор" />
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber2">
+              <ScrambleText text="Главный вопрос автовладельца" />
             </p>
-            <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-              <MaskLines lines={[<span key="1">Что вас ждёт</span>, <span key="2">на маршруте</span>]} />
+            <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
+              <MaskLines lines={[<span key="1">Дилер дорого.</span>, <span key="2">В гараже — страшно.</span>, <span key="3" className="text-amber2">Есть третий вариант.</span>]} />
             </h2>
           </div>
 
-          <div className="mt-12 flex flex-wrap gap-3">
-            {HIGHLIGHTS.map((o) => (
+          <Reveal delay={150} className="mt-12 overflow-x-auto">
+            <table className="w-full min-w-[760px] border-collapse text-sm">
+              <thead>
+                <tr>
+                  <th className="w-[22%] border-b-2 border-ink-950/20 pb-4 text-left font-mono text-[10px] uppercase tracking-[0.18em] text-mut">Критерий</th>
+                  <th className="border-b-2 border-ink-950/20 pb-4 pl-4 text-left font-display text-base font-medium uppercase tracking-wide">Официальный дилер</th>
+                  <th className="border-b-2 border-ink-950/20 pb-4 pl-4 text-left font-display text-base font-medium uppercase tracking-wide">Гараж у дома</th>
+                  <th className="relative border-b-2 border-amber2 pb-4 pl-4 text-left font-display text-base font-semibold uppercase tracking-wide text-amber2">
+                    «Центральный»
+                    <span className="hazard absolute -top-1 left-0 h-1 w-24" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE.map((r, i) => (
+                  <tr key={r.criterion} className={`group transition-colors hover:bg-card ${i % 2 ? "bg-card/60" : ""}`}>
+                    <td className="border-b border-ink-950/8 py-4 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-mut">{r.criterion}</td>
+                    <td className="border-b border-ink-950/8 py-4 pl-4 text-mut">{r.dealer}</td>
+                    <td className="border-b border-ink-950/8 py-4 pl-4 text-mut">{r.garage}</td>
+                    <td className="border-b border-ink-950/8 bg-amber/10 py-4 pl-4 font-semibold text-inktext transition-colors group-hover:bg-amber/15">{r.central}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- предложения ---------- */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-steel">
+          <ScrambleText text="Спецпредложения сервиса" />
+        </p>
+        <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
+          <MaskLines lines={[<span key="1">Не только ремонт</span>]} />
+        </h2>
+
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          <Reveal>
+            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-amber/60">
+              <div className="hazard h-1.5" />
+              <div className="flex flex-1 flex-col p-7">
+                <IconChecklist className="h-8 w-8 text-amber" />
+                <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Подготовка к техосмотру по ГОСТу</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                  Пройдём с вами весь чек-лист: свет, тормоза, рулевое, выхлоп. Устраняем замечания на месте — диагностическую карту получаете с первого раза.
+                </p>
+                <div className="mt-6 flex items-center justify-between border-t border-linedark pt-5">
+                  <span className="font-display text-lg font-semibold text-amber">от {fmtPrice(3500)}</span>
+                  <button onClick={() => openBooking("gost")} className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-amber">записаться →</button>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-steel/60">
+              <div className="h-1.5 bg-steel" />
+              <div className="flex flex-1 flex-col p-7">
+                <IconWash className="h-8 w-8 text-steel" />
+                <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Автомагазин: запчасти под заказ</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                  Оригиналы и проверенные аналоги по доступным ценам. Привозим за 1–3 дня, ставим здесь же — гарантия и на деталь, и на работу.
+                </p>
+                <div className="mt-6 flex items-center justify-between border-t border-linedark pt-5">
+                  <span className="font-display text-lg font-semibold text-steel">1–3 дня</span>
+                  <a href={WHATSAPP} target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-steel">заказать в whatsapp →</a>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-go/60">
+              <div className="h-1.5 bg-go" />
+              <div className="flex flex-1 flex-col p-7">
+                <IconDoc className="h-8 w-8 text-go" />
+                <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Обслуживание автопарков для юрлиц</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                  Договор, безнал, закрывающие документы, приоритетная запись и персональный менеджер. Ваш парк в одном месте — с отчётами по каждой машине.
+                </p>
+                <div className="mt-6 flex items-center justify-between border-t border-linedark pt-5">
+                  <span className="font-display text-lg font-semibold text-go">договор + НДС</span>
+                  <button onClick={() => openBooking()} className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-go">обсудить →</button>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- прозрачность ---------- */}
+      <section className="border-y border-linedark bg-ink-950/60">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-5 lg:grid-cols-3 lg:px-8">
+          {[
+            { icon: IconCamera, title: "Ремзона под камерами", text: "Смотрите за ремонтом из тёплой зоны ожидания на большом экране — или по фотоотчёту в WhatsApp. Скрывать нам нечего, буквально." },
+            { icon: IconDoc, title: "Акт со сроком выдачи", text: "При приёмке фиксируем работы, запчасти и дату выдачи под подпись. Опоздали по своей вине — скидка 10% на работу." },
+            { icon: IconShield, title: "Гарантия до 12 месяцев", text: "От 6 месяцев на все работы, до 12 — на капремонт двигателя и КПП. Условия прописаны в заказ-наряде, а не «на словах»." },
+          ].map((b, i) => (
+            <Reveal key={b.title} delay={i * 100} className="group">
+              <div className="flex h-14 w-14 items-center justify-center border border-linedark text-amber transition-all duration-500 group-hover:bg-amber group-hover:text-ink-950">
+                <b.icon className="h-6 w-6" />
+              </div>
+              <h3 className="mt-5 font-display text-xl font-medium uppercase">{b.title}</h3>
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-mutd">{b.text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- отзывы ---------- */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8 lg:py-24">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-steel">
+              <ScrambleText text="Отзывы клиентов · без купюр" />
+            </p>
+            <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
+              <MaskLines lines={[<span key="1">Что говорят те,</span>, <span key="2">кто уже приезжал</span>]} />
+            </h2>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setReviewIdx((reviewIdx - 1 + REVIEWS.length) % REVIEWS.length)}
+              aria-label="Предыдущий отзыв"
+              className="flex h-12 w-12 items-center justify-center border border-linedark text-mutd transition-all hover:border-amber hover:text-amber"
+            >
+              <ArrowUpRight className="h-4 w-4 rotate-[225deg]" />
+            </button>
+            <button
+              onClick={() => setReviewIdx((reviewIdx + 1) % REVIEWS.length)}
+              aria-label="Следующий отзыв"
+              className="flex h-12 w-12 items-center justify-center border border-linedark text-mutd transition-all hover:border-amber hover:text-amber"
+            >
+              <ArrowUpRight className="h-4 w-4 rotate-45" />
+            </button>
+          </div>
+        </div>
+
+        <div key={reviewIdx} className="anim-fadeup mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <figure className="border border-linedark bg-ink-950/70 p-8 lg:p-10">
+            <div className="flex gap-1 text-amber" aria-label="Оценка 5 из 5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <svg key={i} viewBox="0 0 20 20" className="h-4 w-4 fill-current"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8z" /></svg>
+              ))}
+            </div>
+            <blockquote className="mt-6 font-display text-xl font-normal leading-relaxed text-star lg:text-2xl">
+              «{review.text}»
+            </blockquote>
+            <figcaption className="mt-8 flex items-center gap-4 border-t border-linedark pt-6">
+              <span className="flex h-11 w-11 items-center justify-center bg-amber font-display text-lg font-semibold text-ink-950">
+                {review.name[0]}
+              </span>
+              <span>
+                <span className="block text-sm font-semibold">{review.name}</span>
+                <span className="block font-mono text-[10px] uppercase tracking-[0.14em] text-mutd">{review.car} · {review.service}</span>
+              </span>
+            </figcaption>
+          </figure>
+
+          <div className="flex flex-col gap-3">
+            {REVIEWS.map((r, i) => (
               <button
-                key={o.id}
-                onClick={() => setActive(o.id)}
-                className={`border px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] transition-all duration-300 ${
-                  active === o.id
-                    ? "border-amberstar bg-amberstar font-semibold text-night-950"
-                    : "border-line text-dim hover:border-amberstar/50 hover:text-star"
+                key={r.name}
+                onClick={() => setReviewIdx(i)}
+                className={`flex items-center justify-between gap-4 border px-5 py-4 text-left transition-all duration-300 ${
+                  i === reviewIdx ? "border-amber bg-amber/10" : "border-linedark hover:border-mutd"
                 }`}
               >
-                {o.name.split(",")[0]}
+                <span>
+                  <span className={`block text-sm font-semibold ${i === reviewIdx ? "text-amber" : "text-star"}`}>{r.name}</span>
+                  <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-mutd">{r.car}</span>
+                </span>
+                <span className={`font-display text-lg ${i === reviewIdx ? "text-amber" : "text-linedark"}`}>{String(i + 1).padStart(2, "0")}</span>
               </button>
             ))}
           </div>
-
-          <div key={current.id} className="anim-fadeup mt-10">
-            <HighlightObject o={current} />
-          </div>
         </div>
       </section>
 
-      {/* ---------- панорама ---------- */}
-      <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal className="kenburns relative h-[46vh] overflow-hidden border border-line lg:h-[60vh]">
-            <img src={SERPENTINE_IMG} alt="Серпантин на перевал Пхия в золотой час" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-night-950/85 via-transparent to-transparent" />
-            <p className="absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.22em] text-dim">
-              Перевал Пхия · 2100 м · золотой час
-            </p>
-          </Reveal>
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-nebula">
-              <ScrambleText text="Философия клуба" />
-            </p>
-            <h2 className="mt-6 font-display text-3xl font-bold uppercase leading-tight lg:text-[2.6rem]">
-              <MaskLines lines={[<span key="1">Можно доехать.</span>, <span key="2">А можно —</span>, <span key="3" className="text-amberstar">приехать</span>]} />
-            </h2>
-            <Reveal delay={200} className="mt-7 space-y-4 text-sm leading-relaxed text-dim lg:text-base">
-              <p>
-                Навигатор проложит маршрут быстрее. Мы проложим — красивее: через перевал, где ловится радио
-                только на серпантине, через паром, который ходит дважды в день, через двор, где пахнет шашлыком.
-              </p>
-              <p>
-                Каждая экспедиция «Апекса» собирается как маршрут ралли: чекпоинты, легенда, резерв по топливу
-                и обязательная точка, где все выйдут из машин молча.
-              </p>
-            </Reveal>
-            <Reveal delay={320} className="mt-8 flex items-center gap-5">
-              <IconUsers className="h-8 w-8 text-amberstar" />
-              <p className="max-w-sm text-sm text-dim">
-                Колонна до шести машин, рация в каждой, штурман на головной. Свой автомобиль — тоже в строю.
-              </p>
-            </Reveal>
+      {/* ---------- партнёры + призыв ---------- */}
+      <section className="border-t border-linedark bg-ink-950/60">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-steel">
+            <ScrambleText text="Партнёры клуба «Центральный»" />
+          </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            {PARTNERS.map((p, i) => (
+              <Reveal key={p.name} delay={i * 100}>
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex h-full items-start justify-between gap-6 border border-linedark bg-ink-900/70 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-amber/60"
+                >
+                  <div>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-amber">{p.tag}</span>
+                    <h3 className="mt-2 font-display text-xl font-medium uppercase">{p.name}</h3>
+                    <p className="mt-3 max-w-sm text-sm leading-relaxed text-mutd">{p.desc}</p>
+                  </div>
+                  <ArrowUpRight className="h-5 w-5 shrink-0 text-mutd transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-amber" />
+                </a>
+              </Reveal>
+            ))}
           </div>
-        </div>
-      </section>
 
-      {/* ---------- призыв ---------- */}
-      <section className="mx-auto max-w-7xl px-5 pb-4 lg:px-8">
-        <Reveal className="relative overflow-hidden border border-amberstar/40 bg-night-900/70 px-8 py-14 lg:px-14">
-          <svg viewBox="0 0 600 120" className="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full opacity-20" aria-hidden="true">
-            <path d="M-10 110 C 120 100, 160 60, 260 55 S 460 60, 610 10" fill="none" stroke="#f2a33c" strokeWidth="2" className="dashline" />
-          </svg>
-          <div className="relative flex flex-wrap items-center justify-between gap-8">
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amberstar">
-                <ScrambleText text="Клуб открыт для новых экипажей" />
-              </p>
-              <h2 className="mt-5 font-display text-2xl font-bold uppercase leading-tight lg:text-4xl">
-                Свободные места тают быстрее,
-                <br />
-                чем резина на треке
-              </h2>
+          <Reveal className="relative mt-16 overflow-hidden border border-amber/40 bg-ink-900/80 px-8 py-14 lg:px-14">
+            <svg viewBox="0 0 600 120" className="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full opacity-20" aria-hidden="true">
+              <path d="M-10 110 C 120 100, 160 60, 260 55 S 460 60, 610 10" fill="none" stroke="#f5a524" strokeWidth="2" className="dashline" />
+            </svg>
+            <div className="relative flex flex-wrap items-center justify-between gap-8">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber">
+                  <ScrambleText text="Машина сама не починится" />
+                </p>
+                <h2 className="mt-4 font-display text-2xl font-semibold uppercase leading-tight lg:text-4xl">
+                  Запишитесь сейчас —
+                  <br />
+                  диагностикой займёмся мы
+                </h2>
+                <p className="mt-4 flex items-center gap-2 text-sm text-mutd">
+                  <IconPin className="h-4 w-4 text-amber" />
+                  Истринский р-н, д. Высоково, ул. Центральная, 13
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => openBooking()}
+                  className="group flex items-center justify-center gap-3 bg-amber px-8 py-5 font-display text-base font-semibold uppercase tracking-[0.06em] text-ink-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(245,165,36,0.5)]"
+                >
+                  Записаться
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+                <a
+                  href={WHATSAPP}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-3 border border-go/60 px-8 py-5 font-mono text-sm text-go transition-all duration-300 hover:bg-go hover:text-ink-950"
+                >
+                  <IconWhatsApp className="h-4 w-4" />
+                  Написать в WhatsApp
+                </a>
+              </div>
             </div>
-            <Link
-              to="/booking"
-              className="group flex items-center gap-3 bg-amberstar px-8 py-5 font-mono text-[12px] uppercase tracking-[0.18em] font-semibold text-night-950 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_44px_-12px_rgba(242,163,60,0.55)]"
-            >
-              Забронировать место
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
     </>
   );

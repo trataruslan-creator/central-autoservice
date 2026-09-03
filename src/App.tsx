@@ -1,10 +1,9 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import Tours from "./pages/Tours";
-import CalendarPage from "./pages/CalendarPage";
-import About from "./pages/About";
-import Booking from "./pages/Booking";
+import Services from "./pages/Services";
+import Why from "./pages/Why";
+import Contacts from "./pages/Contacts";
 
 export default function App() {
   return (
@@ -12,10 +11,9 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/tours" element={<Tours />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/uslugi" element={<Services />} />
+          <Route path="/preimushchestva" element={<Why />} />
+          <Route path="/kontakty" element={<Contacts />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
