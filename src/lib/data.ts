@@ -199,8 +199,7 @@ export function brandFactor(brand: string) {
 /* ---------------- табло ремзоны ---------------- */
 
 export interface Job {
-  plate: string;
-  region: string;
+  id: string;
   car: string;
   job: string;
   stage: number; // 0 принят · 1 диагностика · 2 ремонт · 3 готов
@@ -209,14 +208,14 @@ export interface Job {
 export const STAGES = ["Принят", "Диагностика", "Ремонт", "Готов"];
 
 export const SEED_JOBS: Job[] = [
-  { plate: "А 214 ВМ", region: "750", car: "Kia Rio", job: "ТО-4 + колодки", stage: 2 },
-  { plate: "Е 077 КХ", region: "150", car: "BMW X3", job: "Сход-развал 3D", stage: 1 },
-  { plate: "К 512 ОР", region: "750", car: "Hyundai Solaris", job: "Стойки стабилизатора", stage: 2 },
-  { plate: "М 830 ТС", region: "790", car: "Skoda Octavia", job: "Компьютерная диагностика", stage: 3 },
-  { plate: "Р 158 НА", region: "150", car: "Toyota Camry", job: "Замена ГРМ", stage: 0 },
-  { plate: "Т 402 ЕВ", region: "750", car: "Lada Vesta", job: "Подготовка к техосмотру", stage: 1 },
-  { plate: "У 671 МС", region: "790", car: "VW Tiguan", job: "Ремонт суппорта", stage: 2 },
-  { plate: "В 945 КА", region: "150", car: "Geely Coolray", job: "Плановое ТО", stage: 0 },
+  { id: "j1", car: "Kia Rio", job: "ТО-4 + колодки", stage: 2 },
+  { id: "j2", car: "BMW X3", job: "Сход-развал 3D", stage: 1 },
+  { id: "j3", car: "Hyundai Solaris", job: "Стойки стабилизатора", stage: 2 },
+  { id: "j4", car: "Skoda Octavia", job: "Компьютерная диагностика", stage: 3 },
+  { id: "j5", car: "Toyota Camry", job: "Замена ГРМ", stage: 0 },
+  { id: "j6", car: "Lada Vesta", job: "Подготовка к техосмотру", stage: 1 },
+  { id: "j7", car: "VW Tiguan", job: "Ремонт суппорта", stage: 2 },
+  { id: "j8", car: "Geely Coolray", job: "Плановое ТО", stage: 0 },
 ];
 
 /* ---------------- отзывы ---------------- */

@@ -8,15 +8,6 @@ const STAGE_STYLE = [
   "border-go/60 text-go",
 ];
 
-function Plate({ plate, region }: { plate: string; region: string }) {
-  return (
-    <span className="inline-flex items-stretch overflow-hidden rounded-[3px] border border-mutd/40 bg-star text-ink-950">
-      <span className="px-1.5 py-0.5 font-mono text-[11px] font-bold tracking-[0.06em]">{plate}</span>
-      <span className="flex items-center border-l border-mutd/40 bg-paper px-1 font-mono text-[9px] font-bold">{region}</span>
-    </span>
-  );
-}
-
 export default function JobBoard() {
   const [jobs, setJobs] = useState<Job[]>(() => SEED_JOBS.slice(0, 5));
   const [tick, setTick] = useState(0);
@@ -30,7 +21,7 @@ export default function JobBoard() {
         const next = [...prev];
         const job = next[idx];
         if (job.stage >= 3) {
-          const pool = SEED_JOBS.filter((j) => !prev.some((p) => p.plate === j.plate));
+          const pool = SEED_JOBS.filter((j) => !prev.some((p) => p.id === j.id));
           const fresh = pool.length ? pool[Math.floor(Math.random() * pool.length)] : SEED_JOBS[Math.floor(Math.random() * SEED_JOBS.length)];
           next[idx] = { ...fresh, stage: 0 };
         } else {
@@ -59,8 +50,7 @@ export default function JobBoard() {
 
       <ul className="divide-y divide-linedark">
         {jobs.map((j, i) => (
-          <li key={j.plate + i} className="anim-jobin grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-3.5" style={{ animationDelay: `${i * 60}ms` }}>
-            <Plate plate={j.plate} region={j.region} />
+          <li key={j.id} className="anim-jobin grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-3.5" style={{ animationDelay: `${i * 60}ms` }}>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-star">{j.car}</p>
               <p className="truncate font-mono text-[10px] uppercase tracking-[0.1em] text-mutd">{j.job}</p>
@@ -71,7 +61,7 @@ export default function JobBoard() {
               </span>
               <span className="h-1 w-20 overflow-hidden rounded-full bg-ink-800">
                 <span
-                  key={`${j.plate}-${j.stage}-${tick}`}
+                  key={`${j.id}-${j.stage}-${tick}`}
                   className={`block h-full rounded-full ${j.stage === 3 ? "bg-go" : "bg-amber"} anim-sweep`}
                   style={j.stage === 3 ? { width: "100%", animation: "none" } : { animationDuration: "3.1s" }}
                 />
