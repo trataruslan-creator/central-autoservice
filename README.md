@@ -66,6 +66,17 @@ npm run preview    # локальный просмотр собранной ве
 Netlify, Vercel, GitHub Pages, обычный nginx. Маршруты на HashRouter (`#/uslugi`),
 поэтому дополнительная настройка rewrite-правил не требуется.
 
+## WordPress-тема (основной продукт)
+
+Проект переписан под самый универсальный движок — **WordPress** (текущий сайт central-autoservice.ru уже на нём).
+Готовая тема лежит в папке [`wordpress-theme/central-autoservice/`](wordpress-theme/central-autoservice/README.md):
+
+- установка: скопировать папку в `wp-content/themes/` → активировать → создать 3 страницы с шаблонами (`uslugi`, `preimushchestva`, `kontakty`);
+- все данные (телефон, адрес, цены, отзывы, режим) редактируются в `functions.php` и `inc/data.php`;
+- без jQuery, весь интерактив — нативный JS.
+
+React-сборка ниже служит живым предпросмотром того же дизайна.
+
 ## Контакты сервиса (на сайте)
 
 - Телефон: +7 (950) 599-83-83 · WhatsApp
