@@ -173,6 +173,38 @@ body {
 }
 .cover-back { transform: rotateY(180deg); }
 
+/* серый размытый фотофон обложки */
+.cover-photo {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  object-fit: cover;
+  filter: grayscale(1) blur(32px) brightness(0.68) contrast(1.06);
+  animation: coverdrift 26s ease-in-out infinite alternate;
+}
+@keyframes coverdrift {
+  from { transform: scale(1) translateY(0); }
+  to { transform: scale(1.09) translateY(-1.6%); }
+}
+.cover-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(40, 43, 49, 0.88), rgba(52, 56, 63, 0.7) 42%, rgba(28, 31, 36, 0.94));
+}
+.cover-ghost {
+  position: absolute;
+  right: -3%;
+  bottom: 4%;
+  font-family: var(--font-display);
+  font-size: 23vw;
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  user-select: none;
+}
+
 @keyframes stamp-in {
   0% { opacity: 0; transform: scale(1.8) rotate(-16deg); }
   60% { opacity: 1; transform: scale(0.95) rotate(-7deg); }
