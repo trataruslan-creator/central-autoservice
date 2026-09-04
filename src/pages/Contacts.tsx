@@ -124,7 +124,7 @@ export default function Contacts() {
                       {d}
                       {isToday && <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.14em]">· сегодня</span>}
                     </span>
-                    <span className={`font-mono text-xs ${isToday ? "text-amber" : "text-star"}`}>{hoursFor(i)}</span>
+                    <span className={`font-mono text-xs ${isToday ? "text-amber" : hoursFor(i) === "выходной" ? "text-warn" : "text-star"}`}>{hoursFor(i)}</span>
                   </li>
                 );
               })}

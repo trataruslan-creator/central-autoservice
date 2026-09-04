@@ -45,7 +45,7 @@
                     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;border:1px solid var(--line);background:rgba(18,23,30,.7);padding:16px 20px">
                         <span class="c-status status-line"><span class="dot"><i></i></span><span class="status-text">…</span></span>
                         <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px">
-                            <?php aps_icon('clock'); ?> Пн–Сб 9:00–21:00 · Вс 9:00–18:00
+                            <?php aps_icon('clock'); ?> Пн–Сб 9:00–20:00 · Вс — выходной
                         </span>
                     </div>
                     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);background:rgba(18,23,30,.7);padding:16px 20px">

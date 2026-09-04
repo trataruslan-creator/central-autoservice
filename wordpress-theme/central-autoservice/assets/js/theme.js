@@ -264,7 +264,10 @@
 
   var openInfo = function () {
     var now = new Date();
-    var h = D.hours[String(now.getDay())] || '9-21';
+    var h = D.hours[String(now.getDay())] || '9-20';
+    if (h === 'closed' || h.indexOf('-') === -1) {
+      return { open: false, label: 'воскресенье — выходной, ждём вас в понедельник с 9:00' };
+    }
     var parts = h.split('-');
     var from = parseInt(parts[0], 10), to = parseInt(parts[1], 10);
     var mins = now.getHours() * 60 + now.getMinutes();

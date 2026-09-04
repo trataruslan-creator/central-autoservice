@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import WorkshopDust from "./WorkshopDust";
 import { LogoMark, IconPhone, IconMax, IconCheck, IconPin, IconClock, ArrowUpRight } from "./Icons";
 import { ADDRESS, BRANDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
-import { openState } from "../lib/util";
+import { openState, hoursFor } from "../lib/util";
 
 /* ---------------- контекст записи ---------------- */
 
@@ -239,7 +239,7 @@ function Header() {
           <div className="flex shrink-0 items-center gap-4">
             <p className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-mutd lg:flex">
               <IconClock className="h-3.5 w-3.5 text-amber" />
-              сегодня 9:00–21:00
+              сегодня: {hoursFor(new Date().getDay())}
             </p>
             <ToMapLink />
           </div>
@@ -407,8 +407,8 @@ function Footer() {
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-mutd/70">Режим работы</p>
             <ul className="mt-5 space-y-2 text-sm text-mutd">
-              <li className="flex justify-between gap-4"><span>Пн — Сб</span><span className="font-mono text-star">9:00–21:00</span></li>
-              <li className="flex justify-between gap-4"><span>Воскресенье</span><span className="font-mono text-star">9:00–18:00</span></li>
+              <li className="flex justify-between gap-4"><span>Пн — Сб</span><span className="font-mono text-star">9:00–20:00</span></li>
+              <li className="flex justify-between gap-4"><span>Воскресенье</span><span className="font-mono text-warn">выходной</span></li>
               <li className="pt-2">
                 <a href={PHONE_TEL} className="font-mono text-base text-amber transition-colors hover:text-amber2">{PHONE_DISPLAY}</a>
               </li>

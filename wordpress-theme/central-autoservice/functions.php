@@ -108,7 +108,7 @@ function aps_js_data() {
     }
     $hours = array();
     foreach (APS_HOURS as $d => $h) {
-        $hours[(string) $d] = $h[2]; // «9-21»
+        $hours[(string) $d] = $h[2]; // «9-20» или «closed»
     }
     return array(
         'services' => $services,

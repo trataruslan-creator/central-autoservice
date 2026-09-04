@@ -30,8 +30,8 @@
             <div class="foot-col">
                 <h4>Режим работы</h4>
                 <ul>
-                    <li class="hrs"><span>Пн — Сб</span><b>9:00–21:00</b></li>
-                    <li class="hrs"><span>Воскресенье</span><b>9:00–18:00</b></li>
+                    <li class="hrs"><span>Пн — Сб</span><b>9:00–20:00</b></li>
+                    <li class="hrs"><span>Воскресенье</span><b style="color:var(--warn)">выходной</b></li>
                 </ul>
                 <a class="tel" href="<?php echo esc_attr(APS_PHONE_TEL); ?>"><?php echo esc_html(APS_PHONE_DISPLAY); ?></a>
             </div>

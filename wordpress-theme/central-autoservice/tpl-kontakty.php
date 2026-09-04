@@ -47,7 +47,7 @@ $today = (int) date('w');
                 <?php foreach (array(1,2,3,4,5,6,0) as $d) : $h = APS_HOURS[$d]; ?>
                     <li class="row <?php echo $d === $today ? 'today' : ''; ?>">
                         <span><?php echo esc_html($h[0]); ?><?php echo $d === $today ? ' · сегодня' : ''; ?></span>
-                        <b><?php echo esc_html($h[1]); ?></b>
+                        <b<?php echo $h[2] === 'closed' ? ' style="color:var(--warn)"' : ''; ?>><?php echo esc_html($h[1]); ?></b>
                     </li>
                 <?php endforeach; ?>
             </ul>
