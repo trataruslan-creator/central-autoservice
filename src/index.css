@@ -157,6 +157,37 @@ body {
   -webkit-text-stroke: 1px rgba(139, 152, 167, 0.3);
 }
 
+/* ---------- cover page flip ---------- */
+.cover-scene { perspective: 2400px; }
+.cover-page {
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.05s cubic-bezier(0.66, 0, 0.22, 1);
+  will-change: transform;
+}
+.cover-page.flip { transform: rotateY(-101deg); }
+.cover-face,
+.cover-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.cover-back { transform: rotateY(180deg); }
+
+@keyframes stamp-in {
+  0% { opacity: 0; transform: scale(1.8) rotate(-16deg); }
+  60% { opacity: 1; transform: scale(0.95) rotate(-7deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-8deg); }
+}
+.anim-stamp { animation: stamp-in 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both; }
+
+@keyframes rev {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+}
+.anim-rev { animation: rev 0.35s linear infinite; }
+
 /* price stamp */
 .stamp {
   transform: rotate(-4deg);
