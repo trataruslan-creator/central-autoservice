@@ -1,13 +1,18 @@
+import { useState } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import Cover from "./components/Cover";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Why from "./pages/Why";
 import Contacts from "./pages/Contacts";
 
 export default function App() {
+  const [showCover, setShowCover] = useState(true);
+
   return (
     <HashRouter>
+      {showCover && <Cover onEnter={() => undefined} onDone={() => setShowCover(false)} />}
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
