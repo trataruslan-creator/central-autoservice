@@ -268,7 +268,7 @@
                 <?php aps_icon('wash', 'big'); ?>
                 <h3>Автомагазин: запчасти под заказ</h3>
                 <p>Оригиналы и проверенные аналоги по доступным ценам. Привозим за 1–3 дня, ставим здесь же — гарантия и на деталь, и на работу.</p>
-                <div class="foot"><b>1–3 дня</b><a href="<?php echo esc_attr(APS_WHATSAPP); ?>" target="_blank" rel="noreferrer">заказать в whatsapp →</a></div>
+                <div class="foot"><b>1–3 дня</b><a href="<?php echo esc_attr(APS_MAX); ?>" target="_blank" rel="noreferrer">заказать в MAX →</a></div>
             </div>
         </div>
         <div class="offer o-go" data-reveal>
@@ -288,7 +288,7 @@
     <div class="wrap sec promises" style="padding-top:80px;padding-bottom:80px">
         <?php
         $promises = array(
-            array('icon'=>'camera','t'=>'Ремзона под камерами','x'=>'Смотрите за ремонтом из тёплой зоны ожидания на большом экране — или по фотоотчёту в WhatsApp. Скрывать нам нечего, буквально.'),
+            array('icon'=>'camera','t'=>'Ремзона под камерами','x'=>'Смотрите за ремонтом из тёплой зоны ожидания на большом экране — или по фотоотчёту в MAX. Скрывать нам нечего, буквально.'),
             array('icon'=>'doc','t'=>'Акт со сроком выдачи','x'=>'При приёмке фиксируем работы, запчасти и дату выдачи под подпись. Опоздали по своей вине — скидка 10% на работу.'),
             array('icon'=>'shield','t'=>'Гарантия до 12 месяцев','x'=>'От 6 месяцев на все работы, до 12 — на капремонт двигателя и КПП. Условия прописаны в заказ-наряде, а не «на словах».'),
         );
@@ -371,7 +371,7 @@
                 </div>
                 <div class="cta-btns">
                     <button class="btn btn-amber" data-booking>Записаться <?php aps_icon('arrow','arw'); ?></button>
-                    <a class="btn btn-go" href="<?php echo esc_attr(APS_WHATSAPP); ?>" target="_blank" rel="noreferrer"><?php aps_icon('whatsapp'); ?> Написать в WhatsApp</a>
+                    <a class="btn btn-go" href="<?php echo esc_attr(APS_MAX); ?>" target="_blank" rel="noreferrer"><?php aps_icon('max'); ?> Написать в MAX</a>
                 </div>
             </div>
         </div>

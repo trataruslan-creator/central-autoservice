@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit;
    ============================================================ */
 define('APS_PHONE_DISPLAY', '+7 (950) 599-83-83');
 define('APS_PHONE_TEL',     'tel:+79505998383');
-define('APS_WHATSAPP',      'https://wa.me/79505998383');
+define('APS_MAX',           'https://max.ru/u/central_autoservice');
 define('APS_ADDRESS',       'Истринский р-н, д. Высоково, ул. Центральная, 13');
 define('APS_MAPS_URL',      'https://yandex.ru/maps/-/CHQHM4nV');
 define('APS_COORDS',        '55.906026, 36.936802');
@@ -58,7 +58,7 @@ function aps_price($n) {
 function aps_svg($name) {
     $icons = array(
         'phone'     => '<path d="M5 4h4l1.5 4.5L8 10a12 12 0 0 0 6 6l1.5-2.5L20 15v4a1.5 1.5 0 0 1-1.6 1.5C10.5 20 4 13.5 3.5 5.6A1.5 1.5 0 0 1 5 4z"/>',
-        'whatsapp'  => '<path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z"/><path d="M9 8.8c-.3 1.8 2.4 5.4 5.5 5.9l1-1.4-1.8-1-.8.6c-.9-.4-1.7-1.3-2-2.2l.7-.7-.9-1.9z"/>',
+        'max'       => '<path d="M12 3.5c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-.9 0-1.8-.1-2.6-.4L4.5 19l1-3.3c-1.2-1.2-2-2.9-2-5 0-4 3.8-7.2 8.5-7.2z"/><path d="M8 13.5v-4l2.4 2.6 2.4-2.6 1.2 1.4v2.6"/>',
         'pin'       => '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.3"/>',
         'clock'     => '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/>',
         'route'     => '<circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="5.5" r="2"/><path d="M8 18.5h7a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7" stroke-dasharray="3.5 3"/>',

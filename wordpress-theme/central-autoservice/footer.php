@@ -10,7 +10,7 @@
                 </a>
                 <p class="about">Условия и качество ремонта на уровне официального дилера — по цене гаражного сервиса. Работаем с 2016 года.</p>
                 <div class="soc">
-                    <a href="<?php echo esc_attr(APS_WHATSAPP); ?>" target="_blank" rel="noreferrer" aria-label="WhatsApp"><?php aps_icon('whatsapp'); ?></a>
+                    <a href="<?php echo esc_attr(APS_MAX); ?>" target="_blank" rel="noreferrer" aria-label="MAX"><?php aps_icon('max'); ?></a>
                     <a href="<?php echo esc_attr(APS_PHONE_TEL); ?>" aria-label="Телефон"><?php aps_icon('phone'); ?></a>
                     <a href="<?php echo esc_attr(APS_MAPS_URL); ?>" target="_blank" rel="noreferrer" aria-label="Яндекс Карты"><?php aps_icon('pin'); ?></a>
                 </div>
@@ -60,7 +60,7 @@
 <!-- Мобильная панель действий -->
 <div class="mbar">
     <a href="<?php echo esc_attr(APS_PHONE_TEL); ?>"><?php aps_icon('phone'); ?><span>Позвонить</span></a>
-    <a class="mid" href="<?php echo esc_attr(APS_WHATSAPP); ?>" target="_blank" rel="noreferrer"><?php aps_icon('whatsapp'); ?><span>WhatsApp</span></a>
+    <a class="mid" href="<?php echo esc_attr(APS_MAX); ?>" target="_blank" rel="noreferrer"><?php aps_icon('max'); ?><span>MAX</span></a>
     <button class="go" data-booking><?php aps_icon('check'); ?><span>Записаться</span></button>
 </div>
 

@@ -192,6 +192,14 @@ export function IconPhone(p: P) {
     </svg>
   );
 }
+export function IconMax(p: P) {
+  return (
+    <svg {...base(p)}>
+      <path d="M12 3.5c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-.9 0-1.8-.1-2.6-.4L4.5 19l1-3.3c-1.2-1.2-2-2.9-2-5 0-4 3.8-7.2 8.5-7.2z" />
+      <path d="M8 13.5v-4l2.4 2.6L12.8 9.5l1.2 1.4v2.6" strokeWidth="1.5" />
+    </svg>
+  );
+}
 export function IconWhatsApp(p: P) {
   return (
     <svg {...base(p)}>

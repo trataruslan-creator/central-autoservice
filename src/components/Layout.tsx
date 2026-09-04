@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import WorkshopDust from "./WorkshopDust";
-import { LogoMark, IconPhone, IconWhatsApp, IconCheck, IconPin, IconClock, ArrowUpRight } from "./Icons";
-import { ADDRESS, BRANDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, WHATSAPP } from "../lib/data";
+import { LogoMark, IconPhone, IconMax, IconCheck, IconPin, IconClock, ArrowUpRight } from "./Icons";
+import { ADDRESS, BRANDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
 import { openState } from "../lib/util";
 
 /* ---------------- контекст записи ---------------- */
@@ -339,9 +339,9 @@ function MobileActionBar() {
           <IconPhone className="h-5 w-5" />
           <span className="font-mono text-[9px] uppercase tracking-[0.14em]">Позвонить</span>
         </a>
-        <a href={WHATSAPP} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border-x border-linedark py-3 text-mutd transition-colors active:text-go">
-          <IconWhatsApp className="h-5 w-5" />
-          <span className="font-mono text-[9px] uppercase tracking-[0.14em]">WhatsApp</span>
+        <a href={MAX_LINK} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border-x border-linedark py-3 text-mutd transition-colors active:text-go">
+          <IconMax className="h-5 w-5" />
+          <span className="font-mono text-[9px] uppercase tracking-[0.14em]">MAX</span>
         </a>
         <button onClick={() => openBooking()} className="flex flex-col items-center gap-1 bg-amber py-3 text-ink-950 transition-colors active:bg-amber2">
           <IconCheck className="h-5 w-5" />
@@ -369,8 +369,8 @@ function Footer() {
               Условия и качество ремонта на уровне официального дилера — по цене гаражного сервиса. Работаем с 2016 года.
             </p>
             <div className="mt-6 flex gap-3">
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="flex h-10 w-10 items-center justify-center border border-linedark text-mutd transition-all duration-300 hover:-translate-y-1 hover:border-go hover:text-go">
-                <IconWhatsApp className="h-4 w-4" />
+              <a href={MAX_LINK} target="_blank" rel="noreferrer" aria-label="MAX" className="flex h-10 w-10 items-center justify-center border border-linedark text-mutd transition-all duration-300 hover:-translate-y-1 hover:border-go hover:text-go">
+                <IconMax className="h-4 w-4" />
               </a>
               <a href={PHONE_TEL} aria-label="Телефон" className="flex h-10 w-10 items-center justify-center border border-linedark text-mutd transition-all duration-300 hover:-translate-y-1 hover:border-amber hover:text-amber">
                 <IconPhone className="h-4 w-4" />

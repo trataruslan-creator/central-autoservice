@@ -6,9 +6,9 @@ import { Reveal, MaskLines, ScrambleText, useCountUp, usePageTitle } from "../co
 import { useBooking } from "../components/Layout";
 import {
   ArrowUpRight, IconCamera, IconCheck, IconChecklist, IconDoc, IconPhone, IconPin, IconShield,
-  IconWash, IconWhatsApp, SERVICE_ICON,
+  IconWash, IconMax, SERVICE_ICON,
 } from "../components/Icons";
-import { BRANDS, COMPARE, PARTNERS, PHONE_DISPLAY, PHONE_TEL, REVIEWS, SERVICES, STATS, WHATSAPP } from "../lib/data";
+import { BRANDS, COMPARE, PARTNERS, PHONE_DISPLAY, PHONE_TEL, REVIEWS, SERVICES, STATS, MAX_LINK } from "../lib/data";
 import { fmtPrice } from "../lib/util";
 
 function BrandTicker() {
@@ -262,7 +262,7 @@ export default function Home() {
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-linedark pt-5">
                   <span className="font-display text-lg font-semibold text-steel">1–3 дня</span>
-                  <a href={WHATSAPP} target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-steel">заказать в whatsapp →</a>
+                  <a href={MAX_LINK} target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-steel">заказать в MAX →</a>
                 </div>
               </div>
             </div>
@@ -291,7 +291,7 @@ export default function Home() {
       <section className="border-y border-linedark bg-ink-950/60">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-5 lg:grid-cols-3 lg:px-8">
           {[
-            { icon: IconCamera, title: "Ремзона под камерами", text: "Смотрите за ремонтом из тёплой зоны ожидания на большом экране — или по фотоотчёту в WhatsApp. Скрывать нам нечего, буквально." },
+            { icon: IconCamera, title: "Ремзона под камерами", text: "Смотрите за ремонтом из тёплой зоны ожидания на большом экране — или по фотоотчёту в MAX. Скрывать нам нечего, буквально." },
             { icon: IconDoc, title: "Акт со сроком выдачи", text: "При приёмке фиксируем работы, запчасти и дату выдачи под подпись. Опоздали по своей вине — скидка 10% на работу." },
             { icon: IconShield, title: "Гарантия до 12 месяцев", text: "От 6 месяцев на все работы, до 12 — на капремонт двигателя и КПП. Условия прописаны в заказ-наряде, а не «на словах»." },
           ].map((b, i) => (
@@ -430,13 +430,13 @@ export default function Home() {
                   <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </button>
                 <a
-                  href={WHATSAPP}
+                  href={MAX_LINK}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center gap-3 border border-go/60 px-8 py-5 font-mono text-sm text-go transition-all duration-300 hover:bg-go hover:text-ink-950"
                 >
-                  <IconWhatsApp className="h-4 w-4" />
-                  Написать в WhatsApp
+                  <IconMax className="h-4 w-4" />
+                  Написать в MAX
                 </a>
               </div>
             </div>

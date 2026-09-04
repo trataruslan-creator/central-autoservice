@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Reveal, MaskLines, ScrambleText, usePageTitle } from "../components/Reveal";
 import { useBooking } from "../components/Layout";
-import { ArrowUpRight, IconCamera, IconCheck, IconClock, IconPhone, IconPin, IconRoute, IconWhatsApp } from "../components/Icons";
-import { ADDRESS, BRANDS, COORDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, WHATSAPP } from "../lib/data";
+import { ArrowUpRight, IconCamera, IconCheck, IconClock, IconPhone, IconPin, IconRoute, IconMax } from "../components/Icons";
+import { ADDRESS, BRANDS, COORDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
 import { DAY_NAMES, hoursFor, openState, pad } from "../lib/util";
 
 function Clock() {
@@ -87,9 +87,9 @@ export default function Contacts() {
                 <IconPhone className="h-4 w-4 text-amber" />
                 <span className="font-mono text-xs text-star transition-colors group-hover:text-amber">{PHONE_DISPLAY}</span>
               </a>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-go">
-                <IconWhatsApp className="h-4 w-4 text-go" />
-                <span className="font-mono text-xs text-star transition-colors group-hover:text-go">WhatsApp</span>
+              <a href={MAX_LINK} target="_blank" rel="noreferrer" className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-go">
+                <IconMax className="h-4 w-4 text-go" />
+                <span className="font-mono text-xs text-star transition-colors group-hover:text-go">MAX</span>
               </a>
             </div>
           </Reveal>

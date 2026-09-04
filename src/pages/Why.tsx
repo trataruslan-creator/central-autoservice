@@ -135,11 +135,11 @@ export default function Why() {
               <h3 className="mt-6 font-display text-2xl font-medium uppercase leading-snug lg:text-3xl">Видеонаблюдение в ремзоне</h3>
               <p className="mt-4 max-w-2xl flex-1 text-sm leading-relaxed text-mutd lg:text-base">
                 Над каждым постом — камера. Сидите в тёплой зоне ожидания с кофе и смотрите на большом экране,
-                как разбирают именно вашу машину. Уезжаете — пришлём фотоотчёт ключевых этапов в WhatsApp.
+                как разбирают именно вашу машину. Уезжаете — пришлём фотоотчёт ключевых этапов в MAX.
                 «Доверяй, но проверяй» — здесь работает в прямом смысле.
               </p>
               <div className="mt-8 grid grid-cols-3 gap-3 border-t border-linedark pt-6">
-                {["8 камер в ремзоне", "экран в зоне ожидания", "фотоотчёт в whatsapp"].map((x) => (
+                {["8 камер в ремзоне", "экран в зоне ожидания", "фотоотчёт в MAX"].map((x) => (
                   <p key={x} className="flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-mutd">
                     <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-go" />
                     {x}

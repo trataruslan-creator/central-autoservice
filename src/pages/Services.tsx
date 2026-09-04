@@ -192,7 +192,7 @@ export default function Services() {
               <MaskLines lines={[<span key="1">Вопросы, которые</span>, <span key="2">задают чаще всего</span>]} />
             </h2>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-mutd">
-              Не нашли ответа — напишите в WhatsApp, мастер-приёмщик отвечает лично, без «ваш звонок очень важен для нас».
+              Не нашли ответа — напишите в MAX, мастер-приёмщик отвечает лично, без «ваш звонок очень важен для нас».
             </p>
           </div>
           <div className="space-y-3">

@@ -26,7 +26,7 @@ $today = (int) date('w');
             <p class="mono" data-status-label style="margin-top:8px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutd)">…</p>
             <div class="c-btns">
                 <a class="c-btn tel" href="<?php echo esc_attr(APS_PHONE_TEL); ?>"><?php aps_icon('phone'); ?><b><?php echo esc_html(APS_PHONE_DISPLAY); ?></b></a>
-                <a class="c-btn wa" href="<?php echo esc_attr(APS_WHATSAPP); ?>" target="_blank" rel="noreferrer"><?php aps_icon('whatsapp'); ?><b>WhatsApp</b></a>
+                <a class="c-btn wa" href="<?php echo esc_attr(APS_MAX); ?>" target="_blank" rel="noreferrer"><?php aps_icon('max'); ?><b>MAX</b></a>
             </div>
         </div>
 
