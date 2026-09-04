@@ -155,6 +155,17 @@ export function IconChecklist(p: P) {
     </svg>
   );
 }
+export function IconAutoElectric(p: P) {
+  return (
+    <svg {...base(p)}>
+      <path d="M4 16l1.5-4.2A2 2 0 0 1 7.4 10.5h9.2a2 2 0 0 1 1.9 1.3L20 16" />
+      <path d="M3 16h18v3.5h-2M5 19.5H3V16" />
+      <circle cx="7.3" cy="19.5" r="1.7" />
+      <circle cx="16.7" cy="19.5" r="1.7" />
+      <path d="M12.5 2.5 9.5 7h2.2l-1.2 3.5L14 6h-2.3z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 export function IconPresale(p: P) {
   return (
     <svg {...base(p)}>
@@ -180,7 +191,7 @@ export const SERVICE_ICON: Record<string, (p: P) => React.JSX.Element> = {
   electric: IconBolt,
   wash: IconWash,
   tires: IconTire,
-  gost: IconChecklist,
+  autoelectric: IconAutoElectric,
   presale: IconPresale,
 };
 

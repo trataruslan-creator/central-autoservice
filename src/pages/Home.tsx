@@ -5,7 +5,7 @@ import Estimator from "../components/Estimator";
 import { Reveal, MaskLines, ScrambleText, useCountUp, usePageTitle } from "../components/Reveal";
 import { useBooking } from "../components/Layout";
 import {
-  ArrowUpRight, IconCamera, IconCheck, IconChecklist, IconDoc, IconPhone, IconPin, IconShield,
+  ArrowUpRight, IconAutoElectric, IconCamera, IconCheck, IconDoc, IconPhone, IconPin, IconShield,
   IconWash, IconMax, SERVICE_ICON,
 } from "../components/Icons";
 import { BRANDS, COMPARE, PARTNERS, PHONE_DISPLAY, PHONE_TEL, REVIEWS, SERVICES, STATS, MAX_LINK } from "../lib/data";
@@ -97,7 +97,7 @@ export default function Home() {
               </a>
             </Reveal>
             <Reveal delay={660} className="mt-10 flex flex-wrap gap-2.5">
-              {["Техосмотр по ГОСТу", "Сход-развал 3D · 2024", "Видеонаблюдение ремзоны", "Акт со сроком выдачи"].map((c) => (
+              {["Автоэлектрик · 4500 ₽/час", "Сход-развал 3D · 2024", "Видеонаблюдение ремзоны", "Акт со сроком выдачи"].map((c) => (
                 <span key={c} className="flex items-center gap-2 border border-linedark bg-ink-950/50 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-mutd">
                   <IconCheck className="h-3.5 w-3.5 text-go" />
                   {c}
@@ -128,7 +128,7 @@ export default function Home() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber2">
-                <ScrambleText text="Прайс-ведомость · 14 видов работ" />
+                <ScrambleText text="Прайс-ведомость · 13 видов работ" />
               </p>
               <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
                 <MaskLines lines={[<span key="1">С чем приезжают</span>, <span key="2">чаще всего</span>]} />
@@ -159,7 +159,7 @@ export default function Home() {
                     <span className="hidden max-w-xs text-sm leading-relaxed text-mut sm:block">{s.short}</span>
                     <span className="text-right">
                       <span className="block font-display text-lg font-semibold text-inktext lg:text-xl">{fmtPrice(s.priceFrom)}</span>
-                      <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-mut">от · с запчастями уточним</span>
+                      <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-mut">{s.priceNote ?? "от · с запчастями уточним"}</span>
                     </span>
                   </button>
                 </Reveal>
@@ -238,14 +238,14 @@ export default function Home() {
             <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-amber/60">
               <div className="hazard h-1.5" />
               <div className="flex flex-1 flex-col p-7">
-                <IconChecklist className="h-8 w-8 text-amber" />
-                <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Подготовка к техосмотру по ГОСТу</h3>
+                <IconAutoElectric className="h-8 w-8 text-amber" />
+                <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Автоэлектрик — оплата по нормо-часу</h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
-                  Пройдём с вами весь чек-лист: свет, тормоза, рулевое, выхлоп. Устраняем замечания на месте — диагностическую карту получаете с первого раза.
+                  Штатный автоэлектрик: диагностика, поиск утечек, установка сигнализаций и допоборудования. Платите за фактическое время — 4500 ₽ за нормо-час, счётчик при вас.
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-linedark pt-5">
-                  <span className="font-display text-lg font-semibold text-amber">от {fmtPrice(3500)}</span>
-                  <button onClick={() => openBooking("gost")} className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-amber">записаться →</button>
+                  <span className="font-display text-lg font-semibold text-amber">{fmtPrice(4500)} / час</span>
+                  <button onClick={() => openBooking("autoelectric")} className="font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors hover:text-amber">записаться →</button>
                 </div>
               </div>
             </div>

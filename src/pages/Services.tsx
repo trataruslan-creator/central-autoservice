@@ -29,7 +29,7 @@ function ServiceRow({ id }: { id: string }) {
         <span className="hidden max-w-sm text-sm leading-relaxed text-mut sm:block">{s.short}</span>
         <span className="text-right">
           <span className="block font-display text-lg font-semibold lg:text-xl">{fmtPrice(s.priceFrom)}</span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-mut">от</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-mut">{s.priceNote ?? "от"}</span>
         </span>
         <IconChevron className={`h-4 w-4 text-mut transition-transform duration-300 ${open ? "rotate-90 text-amber2" : ""}`} />
       </button>

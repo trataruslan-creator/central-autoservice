@@ -107,7 +107,7 @@
                 <a class="btn btn-ghost" href="<?php echo esc_attr(APS_PHONE_TEL); ?>"><?php aps_icon('phone'); ?> <?php echo esc_html(APS_PHONE_DISPLAY); ?></a>
             </div>
             <div data-reveal style="margin-top:40px;display:flex;flex-wrap:wrap;gap:10px">
-                <?php foreach (array('Техосмотр по ГОСТу','Сход-развал 3D · 2024','Видеонаблюдение ремзоны','Акт со сроком выдачи') as $chip) : ?>
+                <?php foreach (array('Автоэлектрик · 4500 ₽/час','Сход-развал 3D · 2024','Видеонаблюдение ремзоны','Акт со сроком выдачи') as $chip) : ?>
                     <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(13,17,23,.5);padding:9px 14px;font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--mutd)">
                         <?php aps_icon('check'); ?><?php echo esc_html($chip); ?>
                     </span>
@@ -175,7 +175,7 @@
     <div class="wrap sec" style="padding-top:80px;padding-bottom:80px">
         <div class="sec-head">
             <div>
-                <p class="eyebrow scr" data-text="Прайс-ведомость · 14 видов работ">Прайс-ведомость · 14 видов работ</p>
+                <p class="eyebrow scr" data-text="Прайс-ведомость · 13 видов работ">Прайс-ведомость · 13 видов работ</p>
                 <h2 class="title mask-only" data-reveal>
                     <span class="mline"><span>С чем приезжают</span></span>
                     <span class="mline"><span>чаще всего</span></span>
@@ -193,7 +193,7 @@
                         <span class="svc-time"><?php echo esc_html($s['time']); ?></span>
                     </span>
                     <span class="svc-short"><?php echo esc_html($s['short']); ?></span>
-                    <span class="svc-price"><b><?php echo aps_price($s['price']); ?></b><small>от · с запчастями уточним</small></span>
+                    <span class="svc-price"><b><?php echo aps_price($s['price']); ?></b><small><?php echo esc_html($s['note'] ?? 'от · с запчастями уточним'); ?></small></span>
                 </button>
             <?php endforeach; ?>
         </div>
@@ -256,10 +256,10 @@
         <div class="offer o-amber" data-reveal>
             <div class="bar"></div>
             <div class="in">
-                <?php aps_icon('checklist', 'big'); ?>
-                <h3>Подготовка к техосмотру по ГОСТу</h3>
-                <p>Пройдём с вами весь чек-лист: свет, тормоза, рулевое, выхлоп. Устраняем замечания на месте — диагностическую карту получаете с первого раза.</p>
-                <div class="foot"><b>от <?php echo aps_price(3500); ?></b><button data-booking data-service="gost">записаться →</button></div>
+                <?php aps_icon('autoelectric', 'big'); ?>
+                <h3>Автоэлектрик — оплата по нормо-часу</h3>
+                <p>Штатный автоэлектрик: диагностика, поиск утечек, установка сигнализаций и допоборудования. Платите за фактическое время — 4500 ₽ за нормо-час, счётчик при вас.</p>
+                <div class="foot"><b><?php echo aps_price(4500); ?> / час</b><button data-booking data-service="autoelectric">записаться →</button></div>
             </div>
         </div>
         <div class="offer o-steel" data-reveal>

@@ -41,7 +41,7 @@ get_header(); ?>
                         </span>
                         <span class="svc-time"><?php echo esc_html($s['time']); ?> · <?php echo esc_html(APS_CATS[$s['cat']]); ?></span>
                     </span>
-                    <span class="svc-price"><b><?php echo aps_price($s['price']); ?></b><small>от · работа</small></span>
+                    <span class="svc-price"><b><?php echo aps_price($s['price']); ?></b><small><?php echo esc_html($s['note'] ?? 'от · работа'); ?></small></span>
                 </button>
                 <div class="svc-x-body">
                     <div class="svc-x-inner">
