@@ -167,37 +167,6 @@ function BookingModal({ open, service, onClose }: { open: boolean; service: stri
   );
 }
 
-/* ---------------- «на карту» ---------------- */
-
-function ToMapLink() {
-  return (
-    <a
-      href={MAPS_URL}
-      target="_blank"
-      rel="noreferrer"
-      className="group relative inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-mutd transition-colors duration-300 hover:text-amber"
-      aria-label="Показать на карте"
-    >
-      <span className="relative flex h-5 w-5 items-center justify-center">
-        <span className="anim-pingot absolute inset-0 rounded-full" aria-hidden="true" />
-        <IconPin className="anim-pin h-4 w-4 text-amber" />
-      </span>
-      <span className="relative">
-        на карту
-        <svg
-          className="absolute -bottom-1 left-0 h-[3px] w-full overflow-visible text-amber"
-          viewBox="0 0 60 3"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path d="M0 1.5h60" fill="none" stroke="currentColor" strokeWidth="1.5" className="tomap-line" opacity="0.55" />
-        </svg>
-      </span>
-      <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-    </a>
-  );
-}
-
 /* ---------------- шапка ---------------- */
 
 function Header() {
@@ -222,30 +191,6 @@ function Header() {
         scrolled ? "border-b border-linedark bg-ink-900/90 backdrop-blur-md" : "border-b border-transparent bg-transparent"
       }`}
     >
-      {/* строка адреса */}
-      <div
-        className={`overflow-hidden border-b transition-all duration-500 ${
-          scrolled ? "max-h-0 border-transparent opacity-0" : "max-h-12 border-linedark/60 bg-ink-950/80 opacity-100 backdrop-blur-md"
-        }`}
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-5 lg:px-8">
-          <p className="flex min-w-0 items-center gap-2 truncate font-mono text-[10px] uppercase tracking-[0.12em] text-mutd">
-            <IconPin className="h-3.5 w-3.5 shrink-0 text-amber" />
-            <span className="truncate">
-              <span className="hidden md:inline">{ADDRESS}</span>
-              <span className="md:hidden">Истра · Высоково · Центральная, 13</span>
-            </span>
-          </p>
-          <div className="flex shrink-0 items-center gap-4">
-            <p className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-mutd lg:flex">
-              <IconClock className="h-3.5 w-3.5 text-amber" />
-              сегодня 9:00–21:00
-            </p>
-            <ToMapLink />
-          </div>
-        </div>
-      </div>
-
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-5 lg:px-8">
         <Link to="/" className="group flex items-center gap-2.5">
           <LogoMark className="h-9 w-9 text-amber transition-transform duration-500 group-hover:rotate-[30deg]" />

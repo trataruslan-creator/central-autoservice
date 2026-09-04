@@ -65,7 +65,7 @@ export default function Home() {
               <span className="hazard inline-block h-2.5 w-10" />
               <ScrambleText text="Автосервис · Истра, д. Высоково" />
             </p>
-            <h1 className="mt-6 font-display text-[clamp(2.3rem,6.2vw,4.6rem)] font-semibold uppercase leading-[1.02] tracking-tight">
+            <h1 className="mt-6 font-display text-[clamp(2.3rem,6.2vw,4.6rem)] font-semibold uppercase leading-[1.02] tracking-tight text-white">
               <MaskLines
                 lines={[
                   <span key="1">Качество дилера.</span>,
