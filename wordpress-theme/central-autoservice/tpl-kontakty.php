@@ -56,7 +56,7 @@ $today = (int) date('w');
 </section>
 
 <!-- карта + форма -->
-<section class="wrap" style="padding:64px 20px">
+<section class="wrap" style="padding:64px 20px 96px">
     <div class="k2">
         <div>
             <div class="map-card" data-reveal>
@@ -144,20 +144,6 @@ $today = (int) date('w');
                 <p>Перезвоним в течение 15 минут в рабочее время и подберём удобное окно заезда.</p>
                 <button type="button" data-reset>Отправить ещё одну</button>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- быстрый призыв -->
-<section class="wrap" style="padding-bottom:40px">
-    <div data-reveal style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;border:1px solid var(--line);background:rgba(13,17,23,.7);padding:32px">
-        <div>
-            <p style="font-family:var(--fd);font-weight:500;font-size:22px;text-transform:uppercase">Срочный вопрос по машине?</p>
-            <p style="margin-top:6px;font-size:14px;color:var(--mutd)">Мастер-приёмщик на связи в рабочее время — без роботов и очередей.</p>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:12px">
-            <a class="btn btn-ghost" style="border-color:rgba(245,165,36,.6);color:var(--amber)" href="<?php echo esc_attr(APS_PHONE_TEL); ?>"><?php aps_icon('phone'); ?> <?php echo esc_html(APS_PHONE_DISPLAY); ?></a>
-            <button class="btn btn-ghost" data-booking>Заказать звонок</button>
         </div>
     </div>
 </section>

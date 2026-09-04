@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Reveal, MaskLines, ScrambleText, usePageTitle } from "../components/Reveal";
-import { useBooking } from "../components/Layout";
 import { ArrowUpRight, IconCamera, IconCheck, IconClock, IconPhone, IconPin, IconRoute, IconMax } from "../components/Icons";
 import { ADDRESS, BRANDS, COORDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
 import { DAY_NAMES, hoursFor, openState, pad } from "../lib/util";
@@ -21,7 +20,6 @@ function Clock() {
 
 export default function Contacts() {
   usePageTitle("Контакты — Автосервис «Центральный», Истра");
-  const { openBooking } = useBooking();
   const os = openState();
   const today = new Date().getDay();
 
@@ -134,7 +132,7 @@ export default function Contacts() {
       </section>
 
       {/* карта + форма */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-5 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-5 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <Reveal className="relative h-[320px] overflow-hidden border border-linedark bg-ink-950 lg:h-full lg:min-h-[480px]">
@@ -256,23 +254,6 @@ export default function Contacts() {
         </div>
       </section>
 
-      {/* быстрый призыв */}
-      <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-5 lg:px-8">
-        <Reveal className="flex flex-wrap items-center justify-between gap-6 border border-linedark bg-ink-950/70 px-8 py-8">
-          <div>
-            <p className="font-display text-xl font-medium uppercase lg:text-2xl">Срочный вопрос по машине?</p>
-            <p className="mt-1 text-sm text-mutd">Мастер-приёмщик на связи в рабочее время — без роботов и очередей.</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <a href={PHONE_TEL} className="flex items-center gap-2.5 border border-amber px-6 py-3.5 font-mono text-sm text-amber transition-all duration-300 hover:bg-amber hover:text-ink-950">
-              <IconPhone className="h-4 w-4" /> {PHONE_DISPLAY}
-            </a>
-            <button onClick={() => openBooking()} className="border border-linedark px-6 py-3.5 font-mono text-sm text-mutd transition-all duration-300 hover:border-amber hover:text-amber">
-              Заказать звонок
-            </button>
-          </div>
-        </Reveal>
-      </section>
     </>
   );
 }
