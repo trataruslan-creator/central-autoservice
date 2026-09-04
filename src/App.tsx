@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
@@ -19,6 +20,7 @@ export default function App() {
         </Routes>
       </Layout>
       <Analytics />
+      <SpeedInsights />
     </HashRouter>
   );
 }
