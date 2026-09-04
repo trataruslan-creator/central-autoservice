@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit;
    ============================================================ */
 define('APS_PHONE_DISPLAY', '+7 (950) 599-83-83');
 define('APS_PHONE_TEL',     'tel:+79505998383');
-define('APS_MAX',           'https://max.ru/u/central_autoservice');
+define('APS_MAX',           'https://max.ru/+79505998383');
 define('APS_ADDRESS',       'Истринский р-н, д. Высоково, ул. Центральная, 13');
 define('APS_MAPS_URL',      'https://yandex.ru/maps/-/CHQHM4nV');
 define('APS_COORDS',        '55.906026, 36.936802');

@@ -1,6 +1,6 @@
 export const PHONE_DISPLAY = "+7 (950) 599-83-83";
 export const PHONE_TEL = "tel:+79505998383";
-export const MAX_LINK = "https://max.ru/u/central_autoservice";
+export const MAX_LINK = "https://max.ru/+79505998383";
 export const ADDRESS = "Истринский р-н, д. Высоково, ул. Центральная, 13";
 export const MAPS_URL = "https://yandex.ru/maps/-/CHQHM4nV";
 export const COORDS = "55.906026, 36.936802";
