@@ -83,11 +83,9 @@ React-сборка ниже служит живым предпросмотром
 
 ### Настройка
 
-1. Создайте счётчик в [Яндекс.Метрике](https://metrika.yandex.ru/)
-2. Скопируйте номер счётчика (8-значное число)
-3. Замените `REPLACE_WITH_YOUR_METRICA_ID` на ваш номер в двух местах:
-   - **React-версия**: `index.html` (строки 33 и 43)
-   - **WordPress-тема**: `wordpress-theme/central-autoservice/functions.php` (строка с `$id = 'REPLACE_WITH_YOUR_METRICA_ID'`)
+Счётчик Яндекс.Метрики уже подключён с номером **112450035**. Если нужно изменить номер, отредактируйте:
+- **React-версия**: `index.html` (строки 33 и 43)
+- **WordPress-тема**: `wordpress-theme/central-autoservice/functions.php` (строка с `$id = '112450035'`)
 
 ### Отслеживаемые цели
 

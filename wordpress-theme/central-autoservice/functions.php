@@ -49,7 +49,7 @@ add_action('wp_head', 'aps_favicon');
 
 /* Яндекс.Метрика */
 function aps_yandex_metrika() {
-    $id = 'REPLACE_WITH_YOUR_METRICA_ID'; // Замените на ваш ID счётчика
+    $id = '112450035'; // ID счётчика Яндекс.Метрики
     ?>
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
