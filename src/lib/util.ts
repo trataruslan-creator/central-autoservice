@@ -1,3 +1,10 @@
+declare global {
+  interface Window {
+    ym?: (id: number, action: string, ...args: any[]) => void;
+    METRIKA_ID?: number;
+  }
+}
+
 export function pad(n: number) {
   return String(n).padStart(2, "0");
 }
@@ -34,3 +41,10 @@ export function hoursFor(day: number) {
 }
 
 export const DAY_NAMES = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+
+/* Отправка целей в Яндекс.Метрику */
+export function reachGoal(goal: string) {
+  if (typeof window !== "undefined" && typeof (window as any).ym === "function") {
+    (window as any).ym(window.METRIKA_ID, "reachGoal", goal);
+  }
+}

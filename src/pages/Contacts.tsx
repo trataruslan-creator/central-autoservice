@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Reveal, MaskLines, ScrambleText, usePageTitle } from "../components/Reveal";
 import { ArrowUpRight, IconCamera, IconCheck, IconClock, IconPhone, IconPin, IconRoute, IconMax } from "../components/Icons";
 import { ADDRESS, BRANDS, COORDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
-import { DAY_NAMES, hoursFor, openState, pad } from "../lib/util";
+import { DAY_NAMES, hoursFor, openState, pad, reachGoal } from "../lib/util";
 
 function Clock() {
   const [now, setNow] = useState(() => new Date());
@@ -44,6 +44,7 @@ export default function Contacts() {
     window.setTimeout(() => {
       setOrderId(`ЗН-${Math.floor(1000 + Math.random() * 9000)}`);
       setStatus("done");
+      reachGoal("contact_form");
     }, 900);
   };
 
@@ -81,11 +82,11 @@ export default function Contacts() {
             <div className="mt-4"><Clock /></div>
             <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.12em] text-mutd">{os.label}</p>
             <div className="mt-6 grid grid-cols-2 gap-3 border-t border-linedark pt-5">
-              <a href={PHONE_TEL} className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-amber">
+              <a href={PHONE_TEL} onClick={() => reachGoal("phone_click")} className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-amber">
                 <IconPhone className="h-4 w-4 text-amber" />
                 <span className="font-mono text-xs text-star transition-colors group-hover:text-amber">{PHONE_DISPLAY}</span>
               </a>
-              <a href={MAX_LINK} target="_blank" rel="noreferrer" className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-go">
+              <a href={MAX_LINK} onClick={() => reachGoal("max_click")} target="_blank" rel="noreferrer" className="group flex items-center gap-3 border border-linedark px-4 py-3.5 transition-all duration-300 hover:border-go">
                 <IconMax className="h-4 w-4 text-go" />
                 <span className="font-mono text-xs text-star transition-colors group-hover:text-go">MAX</span>
               </a>

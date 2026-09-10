@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import WorkshopDust from "./WorkshopDust";
 import { LogoMark, IconPhone, IconMax, IconCheck, IconPin, IconClock, ArrowUpRight } from "./Icons";
 import { ADDRESS, BRANDS, MAPS_URL, PHONE_DISPLAY, PHONE_TEL, SERVICES, MAX_LINK } from "../lib/data";
-import { openState, hoursFor } from "../lib/util";
+import { openState, hoursFor, reachGoal } from "../lib/util";
 
 /* ---------------- контекст записи ---------------- */
 
@@ -60,6 +60,7 @@ function BookingModal({ open, service, onClose }: { open: boolean; service: stri
     window.setTimeout(() => {
       setOrderId(`ЗН-${Math.floor(1000 + Math.random() * 9000)}`);
       setStatus("done");
+      reachGoal("booking_form");
     }, 900);
   };
 
@@ -276,7 +277,7 @@ function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <a href={PHONE_TEL} className="group hidden items-center gap-2.5 lg:flex">
+          <a href={PHONE_TEL} onClick={() => reachGoal("phone_click")} className="group hidden items-center gap-2.5 lg:flex">
             <span className="flex h-10 w-10 items-center justify-center border border-linedark text-mutd transition-all duration-300 group-hover:border-amber group-hover:text-amber">
               <IconPhone className="h-4 w-4" />
             </span>
@@ -335,11 +336,11 @@ function MobileActionBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-linedark bg-ink-950/95 backdrop-blur-md lg:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div className="grid grid-cols-3">
-        <a href={PHONE_TEL} className="flex flex-col items-center gap-1 py-3 text-mutd transition-colors active:text-amber">
+        <a href={PHONE_TEL} onClick={() => reachGoal("phone_click")} className="flex flex-col items-center gap-1 py-3 text-mutd transition-colors active:text-amber">
           <IconPhone className="h-5 w-5" />
           <span className="font-mono text-[9px] uppercase tracking-[0.14em]">Позвонить</span>
         </a>
-        <a href={MAX_LINK} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border-x border-linedark py-3 text-mutd transition-colors active:text-go">
+        <a href={MAX_LINK} onClick={() => reachGoal("max_click")} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border-x border-linedark py-3 text-mutd transition-colors active:text-go">
           <IconMax className="h-5 w-5" />
           <span className="font-mono text-[9px] uppercase tracking-[0.14em]">MAX</span>
         </a>
@@ -454,6 +455,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const openBooking = useCallback((service?: string) => {
     setModal({ open: true, service: service ?? "" });
+    reachGoal("open_booking_modal");
   }, []);
 
   useEffect(() => {
