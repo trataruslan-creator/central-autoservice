@@ -37,7 +37,7 @@ function BrandTicker() {
 function Stat({ value, suffix, label, note, delay }: { value: number; suffix: string; label: string; note: string; delay: number }) {
   const { ref, val } = useCountUp(value, 1500);
   return (
-    <Reveal delay={delay} className="group border-l-2 border-linedark pl-5 transition-colors duration-500 hover:border-amber">
+    <Reveal delay={delay} className="group card-hover border-l-2 border-linedark pl-5 transition-colors duration-500 hover:border-amber">
       <p className="font-display text-3xl font-semibold text-star lg:text-4xl">
         <span ref={ref}>{new Intl.NumberFormat("ru-RU").format(val)}</span>
         {suffix && <span className="text-amber">{suffix}</span>}
@@ -147,9 +147,9 @@ export default function Home() {
                 <Reveal key={s.id} delay={i * 60}>
                   <button
                     onClick={() => openBooking(s.id)}
-                    className="group grid w-full grid-cols-[44px_1fr_auto] items-center gap-4 border-t border-ink-950/10 py-5 text-left transition-all duration-300 last:border-b hover:bg-card hover:px-4 sm:grid-cols-[56px_1.2fr_1fr_auto] sm:gap-6"
+                    className="group grid w-full grid-cols-[44px_1fr_auto] items-center gap-4 border-t border-ink-950/10 py-5 text-left transition-all duration-500 last:border-b hover:bg-card hover:px-4 hover:shadow-lg hover:shadow-ink-950/5 sm:grid-cols-[56px_1.2fr_1fr_auto] sm:gap-6"
                   >
-                    <span className="flex h-11 w-11 items-center justify-center border border-ink-950/15 text-inktext transition-all duration-300 group-hover:border-amber2 group-hover:bg-amber2 group-hover:text-paper">
+                    <span className="flex h-11 w-11 items-center justify-center border border-ink-950/15 text-inktext transition-all duration-300 group-hover:border-amber2 group-hover:bg-amber2 group-hover:text-paper group-hover:scale-110">
                       {Ico && <Ico className="h-5 w-5" />}
                     </span>
                     <span>
@@ -235,10 +235,10 @@ export default function Home() {
 
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
           <Reveal>
-            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-amber/60">
+            <div className="group card-hover flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:border-amber/60">
               <div className="hazard h-1.5" />
               <div className="flex flex-1 flex-col p-7">
-                <IconAutoElectric className="h-8 w-8 text-amber" />
+                <IconAutoElectric className="h-8 w-8 text-amber transition-transform duration-500 group-hover:scale-110" />
                 <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Автоэлектрик — оплата по нормо-часу</h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
                   Штатный автоэлектрик: диагностика, поиск утечек, установка сигнализаций и допоборудования. Платите за фактическое время — 4500 ₽ за нормо-час, счётчик при вас.
@@ -252,10 +252,10 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={100}>
-            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-steel/60">
+            <div className="group card-hover flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:border-steel/60">
               <div className="h-1.5 bg-steel" />
               <div className="flex flex-1 flex-col p-7">
-                <IconWash className="h-8 w-8 text-steel" />
+                <IconWash className="h-8 w-8 text-steel transition-transform duration-500 group-hover:scale-110" />
                 <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Автомагазин: запчасти под заказ</h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
                   Оригиналы и проверенные аналоги по доступным ценам. Привозим за 1–3 дня, ставим здесь же — гарантия и на деталь, и на работу.
@@ -269,10 +269,10 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={200}>
-            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:-translate-y-1 hover:border-go/60">
+            <div className="group card-hover flex h-full flex-col border border-linedark bg-ink-950/70 transition-all duration-500 hover:border-go/60">
               <div className="h-1.5 bg-go" />
               <div className="flex flex-1 flex-col p-7">
-                <IconDoc className="h-8 w-8 text-go" />
+                <IconDoc className="h-8 w-8 text-go transition-transform duration-500 group-hover:scale-110" />
                 <h3 className="mt-5 font-display text-xl font-medium uppercase leading-snug">Обслуживание автопарков для юрлиц</h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
                   Договор, безнал, закрывающие документы, приоритетная запись и персональный менеджер. Ваш парк в одном месте — с отчётами по каждой машине.
@@ -296,10 +296,10 @@ export default function Home() {
             { icon: IconShield, title: "Гарантия до 12 месяцев", text: "От 6 месяцев на все работы, до 12 — на капремонт двигателя и КПП. Условия прописаны в заказ-наряде, а не «на словах»." },
           ].map((b, i) => (
             <Reveal key={b.title} delay={i * 100} className="group">
-              <div className="flex h-14 w-14 items-center justify-center border border-linedark text-amber transition-all duration-500 group-hover:bg-amber group-hover:text-ink-950">
+              <div className="flex h-14 w-14 items-center justify-center border border-linedark text-amber transition-all duration-500 group-hover:bg-amber group-hover:text-ink-950 group-hover:scale-110 group-hover:rotate-3">
                 <b.icon className="h-6 w-6" />
               </div>
-              <h3 className="mt-5 font-display text-xl font-medium uppercase">{b.title}</h3>
+              <h3 className="mt-5 font-display text-xl font-medium uppercase transition-colors duration-300 group-hover:text-amber">{b.title}</h3>
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-mutd">{b.text}</p>
             </Reveal>
           ))}
