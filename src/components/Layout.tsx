@@ -442,6 +442,13 @@ function Footer() {
             видеонаблюдение ремзоны — онлайн
           </span>
         </div>
+        <div className="border-t border-linedark/50 py-4">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+            <a href="https://webmaster.yandex.ru/siteinfo/?site=central-autoservice.ru" target="_blank" rel="noreferrer">
+              <img width={88} height={31} alt="" style={{ borderRadius: "8px", border: "0" }} src="https://yandex.ru/cycounter?central-autoservice.ru&theme=light&lang=ru" />
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );

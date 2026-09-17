@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import JobBoard from "../components/JobBoard";
 import Estimator from "../components/Estimator";
+import { ReviewsList } from "../components/Reviews";
 import { Reveal, MaskLines, ScrambleText, useCountUp, usePageTitle } from "../components/Reveal";
 import { useBooking } from "../components/Layout";
 import {
@@ -375,6 +376,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---------- пользовательские отзывы ---------- */}
+      <ReviewsList />
 
       {/* ---------- партнёры + призыв ---------- */}
       <section className="border-t border-linedark bg-ink-950/60">
