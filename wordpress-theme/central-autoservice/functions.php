@@ -47,6 +47,12 @@ function aps_favicon() {
 }
 add_action('wp_head', 'aps_favicon');
 
+/* Верификация Яндекс.Вебмастера */
+function aps_yandex_verification() {
+    echo '<meta name="yandex-verification" content="1f858cc5878868af" />' . "\n";
+}
+add_action('wp_head', 'aps_yandex_verification');
+
 /* Яндекс.Метрика */
 function aps_yandex_metrika() {
     $id = '112450035'; // ID счётчика Яндекс.Метрики
