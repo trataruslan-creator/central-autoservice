@@ -1,0 +1,370 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-950: #0d1117;
+  --color-ink-900: #12171e;
+  --color-ink-850: #171e27;
+  --color-ink-800: #1e2732;
+  --color-ink-700: #28333f;
+  --color-linedark: #2b3644;
+  --color-paper: #eef0f2;
+  --color-card: #f8f9fa;
+  --color-inktext: #161c23;
+  --color-mut: #55616e;
+  --color-mutd: #8b98a7;
+  --color-star: #eef2f6;
+  --color-amber: #f5a524;
+  --color-amber2: #d98a0f;
+  --color-go: #2fbf8f;
+  --color-warn: #e2574c;
+  --color-steel: #7fb0d6;
+
+  --font-display: "Oswald", "Manrope", sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink-900);
+  color: var(--color-star);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(245, 165, 36, 0.35);
+  color: #fdf6e5;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #12171e; }
+::-webkit-scrollbar-thumb { background: #2b3644; border-radius: 8px; border: 2px solid #12171e; }
+::-webkit-scrollbar-thumb:hover { background: #3d4c5f; }
+
+/* ---------- ambient noise ---------- */
+.noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+/* blueprint grid for dark sections */
+.blueprint {
+  background-image:
+    linear-gradient(rgba(127, 176, 214, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 176, 214, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* ---------- hazard stripes signature ---------- */
+.hazard {
+  background: repeating-linear-gradient(
+    -45deg,
+    #f5a524 0 12px,
+    #171c23 12px 24px
+  );
+}
+
+/* ---------- scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- marquee ticker ---------- */
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 46s linear infinite;
+}
+.ticker-rev .ticker-track { animation-direction: reverse; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+@keyframes ticker {
+  to { transform: translateX(-50%); }
+}
+
+/* ---------- ken burns breathing ---------- */
+.kenburns img {
+  animation: kb 22s ease-in-out infinite alternate;
+  transform-origin: 60% 40%;
+}
+@keyframes kb {
+  from { transform: scale(1); }
+  to { transform: scale(1.13) translate(1.5%, -1.5%); }
+}
+
+/* ---------- misc motion ---------- */
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.pulse-ring { animation: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite; }
+
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.anim-fadeup { animation: fadeup 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 14s linear infinite; }
+
+@keyframes blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+.cursor-blink { animation: blink 1.1s step-end infinite; }
+
+/* job board row swap */
+@keyframes jobin {
+  from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: none; }
+}
+.anim-jobin { animation: jobin 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* progress bar sweep */
+@keyframes sweep {
+  from { width: 8%; }
+  to { width: 96%; }
+}
+.anim-sweep { animation: sweep 3.4s cubic-bezier(0.4, 0, 0.6, 1) both; }
+
+/* dashed route line */
+@keyframes dashmove {
+  to { stroke-dashoffset: -60; }
+}
+.dashline {
+  stroke-dasharray: 10 12;
+  animation: dashmove 2.6s linear infinite;
+}
+
+/* ---------- «на карту»: метка + бегущий маршрут ---------- */
+@keyframes pindrop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.anim-pin { animation: pindrop 1.8s ease-in-out infinite; }
+
+.tomap-line {
+  stroke-dasharray: 4 4;
+  animation: tomap-run 1.1s linear infinite;
+}
+@keyframes tomap-run {
+  to { stroke-dashoffset: -16; }
+}
+
+/* свечение-пульс вокруг метки */
+@keyframes pingot {
+  0% { box-shadow: 0 0 0 0 rgba(245, 165, 36, 0.45); }
+  100% { box-shadow: 0 0 0 8px rgba(245, 165, 36, 0); }
+}
+.anim-pingot { animation: pingot 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite; }
+
+/* ---------- дополнительные анимации ---------- */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.anim-slide-in-left {
+  animation: slide-in-left 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.anim-slide-in-right {
+  animation: slide-in-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.anim-scale-in {
+  animation: scale-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* плавный hover для карточек */
+.card-hover {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+}
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+}
+
+/* stagger для списков */
+.stagger-item {
+  opacity: 0;
+  animation: fade-in-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }
+.stagger-item:nth-child(5) { animation-delay: 0.5s; }
+.stagger-item:nth-child(6) { animation-delay: 0.6s; }
+
+/* плавное появление при скролле */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-reveal].in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* параллакс для фоновых элементов */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+.anim-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* пульсация для акцентных элементов */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.anim-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* outlined display wordmark */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(139, 152, 167, 0.3);
+}
+
+/* ---------- cover page flip ---------- */
+.cover-scene { perspective: 2400px; }
+.cover-page {
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.05s cubic-bezier(0.66, 0, 0.22, 1);
+  will-change: transform;
+}
+.cover-page.flip { transform: rotateY(-101deg); }
+.cover-face,
+.cover-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.cover-back { transform: rotateY(180deg); }
+
+/* серый размытый фотофон обложки */
+.cover-photo {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  object-fit: cover;
+  filter: grayscale(1) blur(32px) brightness(0.68) contrast(1.06);
+  animation: coverdrift 26s ease-in-out infinite alternate;
+}
+@keyframes coverdrift {
+  from { transform: scale(1) translateY(0); }
+  to { transform: scale(1.09) translateY(-1.6%); }
+}
+.cover-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(40, 43, 49, 0.88), rgba(52, 56, 63, 0.7) 42%, rgba(28, 31, 36, 0.94));
+}
+.cover-ghost {
+  position: absolute;
+  right: -3%;
+  bottom: 4%;
+  font-family: var(--font-display);
+  font-size: 23vw;
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes stamp-in {
+  0% { opacity: 0; transform: scale(1.8) rotate(-16deg); }
+  60% { opacity: 1; transform: scale(0.95) rotate(-7deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-8deg); }
+}
+.anim-stamp { animation: stamp-in 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both; }
+
+@keyframes rev {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+}
+.anim-rev { animation: rev 0.35s linear infinite; }
+
+/* price stamp */
+.stamp {
+  transform: rotate(-4deg);
+  border: 2px solid currentColor;
+  border-radius: 4px;
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .ticker-track { animation: none; }
+  .kenburns img { animation: none; }
+}
