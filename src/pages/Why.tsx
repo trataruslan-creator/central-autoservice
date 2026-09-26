@@ -1,10 +1,10 @@
 import { Reveal, MaskLines, ScrambleText, usePageTitle } from "../components/Reveal";
 import { useBooking } from "../components/Layout";
 import {
-  ArrowUpRight, IconCamera, IconCheck, IconDiag, IconDoc, IconGauge, IconShield, IconWrench, IconAlignment,
+  ArrowUpRight, IconCheck, IconDiag, IconDoc, IconGauge, IconShield, IconWrench, IconAlignment,
 } from "../components/Icons";
 import { PROCESS } from "../lib/data";
-import { ALIGNMENT_IMG, WORKSHOP_IMG } from "../lib/images";
+import { ALIGNMENT_IMG, WORKSHOP_IMG, SERVICE_3D_1, SERVICE_3D_2, SERVICE_3D_3 } from "../lib/images";
 
 const EQUIPMENT = [
   { icon: IconAlignment, name: "Стенд сход-развала 3D", spec: "оборудование 2024 года · точность до 0.01°" },
@@ -14,7 +14,7 @@ const EQUIPMENT = [
 ];
 
 export default function Why() {
-  usePageTitle("Почему мы — Автосервис «Центральный», Истра");
+  usePageTitle("Почему мы — Автосервис «Центральный» в Истре | Ремонт авто с гарантией");
   const { openBooking } = useBooking();
 
   return (
@@ -41,17 +41,10 @@ export default function Why() {
             </Reveal>
           </div>
           <Reveal delay={200} className="kenburns relative h-[38vh] overflow-hidden border border-linedark lg:h-[54vh]">
-            <img src={WORKSHOP_IMG} alt="Ремзона автосервиса: машина на подъёмнике" className="h-full w-full object-cover" />
+            <img src={WORKSHOP_IMG} alt="Современный автосервис в Истре: профессиональное оборудование для ремонта автомобилей" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-mutd">ремзона · пост №2 · камера 03</p>
-              <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-go">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="pulse-ring absolute h-full w-full rounded-full bg-go" />
-                  <span className="relative h-1.5 w-1.5 rounded-full bg-go" />
-                </span>
-                rec
-              </span>
+            <div className="absolute bottom-4 left-5 right-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-mutd">автосервис «Центральный» · Истра</p>
             </div>
           </Reveal>
         </div>
@@ -123,52 +116,84 @@ export default function Why() {
         </div>
       </section>
 
-      {/* прозрачность */}
+      {/* 3D-иллюстрации сервиса */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-5 lg:px-8 lg:py-24">
-        <div className="grid gap-5 lg:grid-cols-3">
-          <Reveal className="lg:col-span-2">
-            <div className="group flex h-full flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-amber/60 lg:p-10">
-              <div className="flex items-center justify-between">
-                <IconCamera className="h-9 w-9 text-amber" />
-                <span className="stamp px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-go">онлайн 24/7</span>
+        <div className="mb-12 max-w-2xl">
+          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-steel">
+            <ScrambleText text="Современный автосервис · технологии будущего" />
+          </p>
+          <h2 className="mt-5 font-display text-3xl font-semibold uppercase leading-tight lg:text-[2.6rem]">
+            <MaskLines lines={[<span key="1">Оборудование,</span>, <span key="2">которому доверяют</span>]} />
+          </h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Reveal>
+            <div className="group card-hover relative overflow-hidden border border-linedark bg-ink-950/70">
+              <div className="aspect-square overflow-hidden">
+                <img src={SERVICE_3D_1} alt="Современный автосервис с подъёмником" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
               </div>
-              <h3 className="mt-6 font-display text-2xl font-medium uppercase leading-snug lg:text-3xl">Видеонаблюдение в ремзоне</h3>
-              <p className="mt-4 max-w-2xl flex-1 text-sm leading-relaxed text-mutd lg:text-base">
-                Над каждым постом — камера. Сидите в тёплой зоне ожидания с кофе и смотрите на большом экране,
-                как разбирают именно вашу машину. Уезжаете — пришлём фотоотчёт ключевых этапов в MAX.
-                «Доверяй, но проверяй» — здесь работает в прямом смысле.
-              </p>
-              <div className="mt-8 grid grid-cols-3 gap-3 border-t border-linedark pt-6">
-                {["8 камер в ремзоне", "экран в зоне ожидания", "фотоотчёт в MAX"].map((x) => (
-                  <p key={x} className="flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-mutd">
-                    <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-go" />
-                    {x}
-                  </p>
-                ))}
+              <div className="p-6">
+                <h3 className="font-display text-lg font-medium uppercase text-amber">Профессиональный подъёмник</h3>
+                <p className="mt-2 text-sm leading-relaxed text-mutd">Гидравлический подъёмник грузоподъёмностью до 5 тонн для легковых и коммерческих автомобилей</p>
               </div>
             </div>
           </Reveal>
 
-          <div className="flex flex-col gap-5">
-            <Reveal delay={100}>
-              <div className="flex flex-1 flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-go/60">
-                <IconDoc className="h-8 w-8 text-go" />
-                <h3 className="mt-5 font-display text-xl font-medium uppercase">Сроки — в акте</h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
-                  Дата выдачи фиксируется при приёмке под подпись. Опоздали по своей вине — минус 10% от стоимости работ.
-                </p>
+          <Reveal delay={100}>
+            <div className="group card-hover relative overflow-hidden border border-linedark bg-ink-950/70">
+              <div className="aspect-square overflow-hidden">
+                <img src={SERVICE_3D_2} alt="Диагностическое оборудование" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
               </div>
-            </Reveal>
-            <Reveal delay={200}>
-              <div className="flex flex-1 flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-steel/60">
-                <IconShield className="h-8 w-8 text-steel" />
-                <h3 className="mt-5 font-display text-xl font-medium uppercase">Гарантия до 12 мес.</h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
-                  От 6 месяцев на работы, до 12 — на капремонт. Показываем заменённые детали при выдаче.
-                </p>
+              <div className="p-6">
+                <h3 className="font-display text-lg font-medium uppercase text-amber">Компьютерная диагностика</h3>
+                <p className="mt-2 text-sm leading-relaxed text-mutd">Дилерские сканеры для точной диагностики всех систем автомобиля</p>
               </div>
-            </Reveal>
-          </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <div className="group card-hover relative overflow-hidden border border-linedark bg-ink-950/70">
+              <div className="aspect-square overflow-hidden">
+                <img src={SERVICE_3D_3} alt="Профессиональные инструменты" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              </div>
+              <div className="p-6">
+                <h3 className="font-display text-lg font-medium uppercase text-amber">Профессиональный инструмент</h3>
+                <p className="mt-2 text-sm leading-relaxed text-mutd">Полный набор инструментов для качественного ремонта любой сложности</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <Reveal>
+            <div className="flex h-full flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-amber/60">
+              <IconDoc className="h-8 w-8 text-go" />
+              <h3 className="mt-5 font-display text-xl font-medium uppercase">Прозрачность работ</h3>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                Фотоотчёт каждого этапа ремонта в MAX. Вы всегда знаете, что происходит с вашим автомобилем.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div className="flex h-full flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-go/60">
+              <IconDoc className="h-8 w-8 text-go" />
+              <h3 className="mt-5 font-display text-xl font-medium uppercase">Сроки — в акте</h3>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                Дата выдачи фиксируется при приёмке под подпись. Опоздали по своей вине — минус 10% от стоимости работ.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={200}>
+            <div className="flex h-full flex-col border border-linedark bg-ink-950/70 p-8 transition-all duration-500 hover:border-steel/60">
+              <IconShield className="h-8 w-8 text-steel" />
+              <h3 className="mt-5 font-display text-xl font-medium uppercase">Гарантия до 12 мес.</h3>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-mutd">
+                От 6 месяцев на работы, до 12 — на капремонт. Показываем заменённые детали при выдаче.
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 
